@@ -10,7 +10,7 @@
 JavaScript client to interact with the [Prismic][prismic] [Custom Types API][prismic-docs-custom-types-api].
 
 - 🎣 Fetch [Custom Type][prismic-docs-custom-types] and [Shared Slice][prismic-docs-shared-slices] models
-- 🛠 Create, update, and delete models
+- 🛠 Insert, update, and delete models
 
 ## Install
 
