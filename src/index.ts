@@ -1,3 +1,18 @@
-export const hello = (str: string): void => {
-	console.log("Hello %s", str);
-};
+export { createClient, CustomTypesClient } from "./client";
+export type { CustomTypesClientConfig, CustomTypesAPIParams } from "./client";
+
+export {
+	PrismicError,
+	ConflictError,
+	ForbiddenError,
+	InvalidPayloadError,
+	MissingFetchError,
+	NotFoundError,
+} from "./errors";
+
+export type {
+	CustomType,
+	FetchLike,
+	ResponseLike,
+	RequestInitLike,
+} from "./types";
