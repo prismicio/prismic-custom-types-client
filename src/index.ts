@@ -1,5 +1,8 @@
 export { createClient, CustomTypesClient } from "./client";
-export type { CustomTypesClientConfig, CustomTypesAPIParams } from "./client";
+export type {
+	CustomTypesClientConfig,
+	CustomTypesClientMethodParams,
+} from "./client";
 
 export {
 	PrismicError,

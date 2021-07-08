@@ -34,11 +34,21 @@ export interface ResponseLike {
  * @typeParam CustomTypeModel - Custom Type Model returned by the API.
  */
 export interface CustomType<
+	ID extends string = string,
 	CustomTypeModel extends prismicT.CustomTypeModel = prismicT.CustomTypeModel,
 > {
-	id: string;
+	/** The ID of the Custom Type model. */
+	id: ID;
+
+	/** The human readable name of the Custom Type Model. */
 	label: string;
+
+	/** Determines if more than one document for the Custom Type can be created. */
 	repeatable: boolean;
+
+	/** The Custom Type model. */
 	json: CustomTypeModel;
+
+	/** Determines if new documents for the Custom Type can be created. */
 	status: boolean;
 }
