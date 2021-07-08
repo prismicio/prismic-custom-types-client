@@ -41,10 +41,8 @@
 		"unit": "nyc --reporter=lcovonly --reporter=text --exclude-after-remap=false ava",
 		"test": "npm run lint && npm run unit"
 	},
-	"dependencies": {
-		"@prismicio/types": "^0.1.2"
-	},
 	"devDependencies": {
+		"@prismicio/types": "^0.1.2",
 		"@types/node-fetch": "^2.5.11",
 		"@types/sinon": "^10.0.2",
 		"@typescript-eslint/eslint-plugin": "^4.28.2",
