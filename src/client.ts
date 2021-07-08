@@ -131,8 +131,8 @@ export class CustomTypesClient {
 	 */
 	async getAll<TCustomType extends CustomType>(
 		params?: CustomTypesClientMethodParams,
-	): Promise<TCustomType> {
-		return await this.fetch<TCustomType>("", params);
+	): Promise<TCustomType[]> {
+		return await this.fetch<TCustomType[]>("", params);
 	}
 
 	/**
