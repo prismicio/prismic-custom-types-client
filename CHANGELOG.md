@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.2](https://github.com/prismicio/prismic-custom-types-client/compare/v0.0.1...v0.0.2) (2021-07-13)
+
+
+### Bug Fixes
+
+* correct return type for getAll ([f6a96a4](https://github.com/prismicio/prismic-custom-types-client/commit/f6a96a4b4faa19af583f1a318abd05faaed28293))
+
+
+### Chore
+
+* remove private property from package.json ([ee5e207](https://github.com/prismicio/prismic-custom-types-client/commit/ee5e207074a605221af49255f90c4e35535355b3))
+
 ### 0.0.1 (2021-07-08)
 
 
