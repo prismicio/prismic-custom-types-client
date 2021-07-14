@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3](https://github.com/prismicio/prismic-custom-types-client/compare/v0.0.2...v0.0.3) (2021-07-14)
+
+
+### Bug Fixes
+
+* use correct Shared Slices endpoints ([5e073be](https://github.com/prismicio/prismic-custom-types-client/commit/5e073bea48ba970cc9e2bb4bf30b267ed7b399a3))
+
+
+### Chore
+
+* update dependencies ([fb12098](https://github.com/prismicio/prismic-custom-types-client/commit/fb12098971c727d2b3a335165960d2b16230cf49))
+
 ### [0.0.2](https://github.com/prismicio/prismic-custom-types-client/compare/v0.0.1...v0.0.2) (2021-07-13)
 
 
