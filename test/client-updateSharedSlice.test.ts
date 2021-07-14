@@ -20,7 +20,7 @@ test("updates a Custom Type", async (t) => {
 
 	server.use(
 		msw.rest.post(
-			resolveURL(client.endpoint, "slices/update"),
+			resolveURL(client.endpoint, "/slices/update"),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -44,7 +44,7 @@ test("updates a Custom Type", async (t) => {
 test("uses params if provided", async (t) => {
 	const customType = createSharedSlice();
 	const client = createClient(t);
-	const params: Required<prismicCustomTypes.CustomTypesAPIParams> = {
+	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
@@ -52,7 +52,7 @@ test("uses params if provided", async (t) => {
 
 	server.use(
 		msw.rest.post(
-			resolveURL(params.endpoint, "slices/update"),
+			resolveURL(params.endpoint, "/slices/update"),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(
@@ -79,7 +79,7 @@ test("throws NotFoundError if a matching Custom Type was not found", async (t) =
 
 	server.use(
 		msw.rest.post(
-			resolveURL(client.endpoint, "slices/update"),
+			resolveURL(client.endpoint, "/slices/update"),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -107,7 +107,7 @@ test("throws InvalidPayloadError if an invalid Shared Slice is sent", async (t) 
 
 	server.use(
 		msw.rest.post(
-			resolveURL(client.endpoint, "slices/update"),
+			resolveURL(client.endpoint, "/slices/update"),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(

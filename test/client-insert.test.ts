@@ -41,7 +41,7 @@ test("inserts a Custom Type", async (t) => {
 test("uses params if provided", async (t) => {
 	const customType = createCustomType();
 	const client = createClient(t);
-	const params: Required<prismicCustomTypes.CustomTypesAPIParams> = {
+	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",

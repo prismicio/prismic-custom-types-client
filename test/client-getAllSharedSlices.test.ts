@@ -18,7 +18,7 @@ test("returns all Shared Slices", async (t) => {
 	const client = createClient(t);
 
 	server.use(
-		msw.rest.get(resolveURL(client.endpoint, "slices"), (req, res, ctx) => {
+		msw.rest.get(resolveURL(client.endpoint, "/slices"), (req, res, ctx) => {
 			if (!isAuthorizedRequest(client, req)) {
 				return res(
 					ctx.status(403),
@@ -38,14 +38,14 @@ test("returns all Shared Slices", async (t) => {
 test("uses params if provided", async (t) => {
 	const queryResponse = [createSharedSlice()];
 	const client = createClient(t);
-	const params: Required<prismicCustomTypes.CustomTypesAPIParams> = {
+	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
 	};
 
 	server.use(
-		msw.rest.get(resolveURL(params.endpoint, "slices"), (req, res, ctx) => {
+		msw.rest.get(resolveURL(params.endpoint, "/slices"), (req, res, ctx) => {
 			if (!isAuthorizedRequest(params, req)) {
 				return res(
 					ctx.status(403),

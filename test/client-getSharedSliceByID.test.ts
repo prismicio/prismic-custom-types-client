@@ -19,7 +19,7 @@ test("returns a Shared Slice by ID", async (t) => {
 
 	server.use(
 		msw.rest.get(
-			resolveURL(client.endpoint, `slices/${sharedSlice.id}`),
+			resolveURL(client.endpoint, `/slices/${sharedSlice.id}`),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -41,7 +41,7 @@ test("returns a Shared Slice by ID", async (t) => {
 test("uses params if provided", async (t) => {
 	const sharedSlice = createSharedSlice();
 	const client = createClient(t);
-	const params: Required<prismicCustomTypes.CustomTypesAPIParams> = {
+	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
@@ -49,7 +49,7 @@ test("uses params if provided", async (t) => {
 
 	server.use(
 		msw.rest.get(
-			resolveURL(params.endpoint, `slices/${sharedSlice.id}`),
+			resolveURL(params.endpoint, `/slices/${sharedSlice.id}`),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(
@@ -74,7 +74,7 @@ test("throws NotFoundError if a matching Custom Type was not found", async (t) =
 
 	server.use(
 		msw.rest.get(
-			resolveURL(client.endpoint, `slices/${sharedSlice.id}`),
+			resolveURL(client.endpoint, `/slices/${sharedSlice.id}`),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(

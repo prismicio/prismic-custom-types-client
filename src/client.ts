@@ -241,7 +241,7 @@ export class CustomTypesClient {
 	async getAllSharedSlices<TSharedSliceModel extends prismicT.SharedSliceModel>(
 		params?: CustomTypesClientMethodParams,
 	): Promise<TSharedSliceModel[]> {
-		return await this.fetch<TSharedSliceModel[]>("slices", params);
+		return await this.fetch<TSharedSliceModel[]>("/slices", params);
 	}
 
 	/**
@@ -260,7 +260,7 @@ export class CustomTypesClient {
 		id: string,
 		params?: CustomTypesClientMethodParams,
 	): Promise<TSharedSliceModel> {
-		return await this.fetch<TSharedSliceModel>(`slices/${id}`, params);
+		return await this.fetch<TSharedSliceModel>(`/slices/${id}`, params);
 	}
 
 	/**
@@ -281,7 +281,7 @@ export class CustomTypesClient {
 		params?: CustomTypesClientMethodParams,
 	): Promise<TSharedSliceModel> {
 		await this.fetch(
-			"slices/insert",
+			"/slices/insert",
 			params,
 			createPostFetchRequestInit(slice),
 		);
@@ -307,7 +307,7 @@ export class CustomTypesClient {
 		params?: CustomTypesClientMethodParams,
 	): Promise<TSharedSliceModel> {
 		await this.fetch(
-			"slices/update",
+			"/slices/update",
 			params,
 			createPostFetchRequestInit(slice),
 		);
@@ -330,7 +330,7 @@ export class CustomTypesClient {
 		id: TSharedSliceID,
 		params?: CustomTypesClientMethodParams,
 	): Promise<TSharedSliceID> {
-		await this.fetch(`slices/${id}`, params, {
+		await this.fetch(`/slices/${id}`, params, {
 			method: "delete",
 		});
 
