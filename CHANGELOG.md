@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/prismicio/prismic-custom-types-client/compare/v0.0.3...v0.0.4) (2021-08-11)
+
+
+### Chore
+
+* add eslint-plugin-tsdoc and prettier-plugin-jsdoc ([71a7746](https://github.com/prismicio/prismic-custom-types-client/commit/71a7746ad1b16b097bd8d21b71fe848e19b2caae))
+* update dependencies ([74a11fc](https://github.com/prismicio/prismic-custom-types-client/commit/74a11fc3f6e6511dea1543b75f7d3dc92061dd56))
+
 ### [0.0.3](https://github.com/prismicio/prismic-custom-types-client/compare/v0.0.2...v0.0.3) (2021-07-14)
 
 
