@@ -1,6 +1,6 @@
 import * as prismicT from "@prismicio/types";
 
-import { CustomType, FetchLike, RequestInitLike } from "./types";
+import { FetchLike, RequestInitLike } from "./types";
 import {
 	PrismicError,
 	MissingFetchError,
@@ -129,7 +129,7 @@ export class CustomTypesClient {
 	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
 	 */
-	async getAll<TCustomType extends CustomType>(
+	async getAll<TCustomType extends prismicT.CustomTypeModel>(
 		params?: CustomTypesClientMethodParams,
 	): Promise<TCustomType[]> {
 		return await this.fetch<TCustomType[]>("", params);
@@ -147,7 +147,7 @@ export class CustomTypesClient {
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
 	 * @throws {@link NotFoundError} Thrown if a Custom Type with the given ID cannot be found.
 	 */
-	async getByID<TCustomType extends CustomType>(
+	async getByID<TCustomType extends prismicT.CustomTypeModel>(
 		id: string,
 		params?: CustomTypesClientMethodParams,
 	): Promise<TCustomType> {
@@ -167,7 +167,7 @@ export class CustomTypesClient {
 	 * @throws {@link InvalidPayloadError} Thrown if an invalid Custom Type is provided.
 	 * @throws {@link ConflictError} Thrown if a Custom Type with the given ID already exists.
 	 */
-	async insert<TCustomType extends CustomType>(
+	async insert<TCustomType extends prismicT.CustomTypeModel>(
 		customType: TCustomType,
 		params?: CustomTypesClientMethodParams,
 	): Promise<TCustomType> {
@@ -193,7 +193,7 @@ export class CustomTypesClient {
 	 * @throws {@link InvalidPayloadError} Thrown if an invalid Custom Type is provided.
 	 * @throws {@link NotFoundError} Thrown if a Custom Type with the given ID cannot be found.
 	 */
-	async update<TCustomType extends CustomType>(
+	async update<TCustomType extends prismicT.CustomTypeModel>(
 		customType: TCustomType,
 		params?: CustomTypesClientMethodParams,
 	): Promise<TCustomType> {

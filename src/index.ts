@@ -13,9 +13,4 @@ export {
 	NotFoundError,
 } from "./errors";
 
-export type {
-	CustomType,
-	FetchLike,
-	ResponseLike,
-	RequestInitLike,
-} from "./types";
+export type { FetchLike, ResponseLike, RequestInitLike } from "./types";
