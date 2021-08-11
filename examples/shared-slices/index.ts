@@ -1,10 +1,14 @@
 import * as prismicCustomTypes from "@prismicio/custom-types-client";
 import fetch from "node-fetch";
 
-/** The Prismic Repository name. */
+/**
+ * The Prismic Repository name.
+ */
 const PRISMIC_REPOSITORY_NAME = "qwerty";
 
-/** The Prismic Custom Types API secret token for the repository. */
+/**
+ * The Prismic Custom Types API secret token for the repository.
+ */
 const PRISMIC_CUSTOM_TYPES_API_TOKEN = "secret-token";
 
 const main = async () => {

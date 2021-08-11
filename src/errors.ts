@@ -14,7 +14,8 @@ type PrismicErrorArgs<TResponse> = {
 };
 
 /**
- * An error returned from the Prismic Custom Types API. It contains information about the network request to aid in debugging.
+ * An error returned from the Prismic Custom Types API. It contains information
+ * about the network request to aid in debugging.
  */
 export class PrismicError<TResponse = never> extends Error {
 	/**
@@ -30,8 +31,8 @@ export class PrismicError<TResponse = never> extends Error {
 	/**
 	 * Creates a new `PrismicError`.
 	 *
-	 * @param message A description of the error.
-	 * @param args Metadata about the failed network request.
+	 * @param message - A description of the error.
+	 * @param args - Metadata about the failed network request.
 	 *
 	 * @returns A `PrismicError` for the given error state.
 	 */
@@ -47,7 +48,9 @@ export class PrismicError<TResponse = never> extends Error {
  * The response returned by the Prismic Custom Types API when unauthorized.
  */
 export interface ForbiddenErrorAPIResponse {
-	/** Description of the error. */
+	/**
+	 * Description of the error.
+	 */
 	message: string;
 }
 
@@ -72,6 +75,7 @@ export class NotFoundError extends PrismicError {}
 export class InvalidPayloadError extends PrismicError {}
 
 /**
- * Represents an error when a valid `fetch` function is not available to the Prismic Custom Types API client.
+ * Represents an error when a valid `fetch` function is not available to the
+ * Prismic Custom Types API client.
  */
 export class MissingFetchError extends Error {}
