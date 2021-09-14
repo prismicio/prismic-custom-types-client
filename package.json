@@ -41,7 +41,7 @@
 		"test": "npm run lint && npm run unit"
 	},
 	"devDependencies": {
-		"@prismicio/types": "^0.1.11",
+		"@prismicio/types": "^0.1.12",
 		"@types/node-fetch": "^2.5.12",
 		"@types/sinon": "^10.0.2",
 		"@typescript-eslint/eslint-plugin": "^4.31.1",
