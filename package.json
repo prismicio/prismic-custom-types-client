@@ -1,6 +1,6 @@
 {
 	"name": "@prismicio/custom-types-client",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "JavaScript client to interact with the Prismic Custom Types API",
 	"keywords": [
 		"typescript",

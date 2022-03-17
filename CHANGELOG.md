@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/prismicio/prismic-custom-types-client/compare/v0.0.6...v0.0.7) (2022-03-17)
+
+
+### Features
+
+* rename Custom Type-related methods to include "CustomType" ([#2](https://github.com/prismicio/prismic-custom-types-client/issues/2)) ([999b3f7](https://github.com/prismicio/prismic-custom-types-client/commit/999b3f7d6be845c63e7709e6f483123108ce02e7))
+
 ### [0.0.6](https://github.com/prismicio/prismic-custom-types-client/compare/v0.0.5...v0.0.6) (2021-09-14)
 
 
