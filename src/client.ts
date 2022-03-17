@@ -130,6 +130,12 @@ export class CustomTypesClient {
 	}
 
 	/**
+	 * @deprecated Renamed to `getAllCustomTypes`.
+	 */
+	// TODO: Remove in v1.
+	getAll = this.getAllCustomTypes.bind(this);
+
+	/**
 	 * Returns all Custom Types models from the Prismic repository.
 	 *
 	 * @typeParam TCustomType - The Custom Type returned from the API.
@@ -138,11 +144,17 @@ export class CustomTypesClient {
 	 * @returns All Custom Type models from the Prismic repository.
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
 	 */
-	async getAll<TCustomType extends prismicT.CustomTypeModel>(
+	async getAllCustomTypes<TCustomType extends prismicT.CustomTypeModel>(
 		params?: CustomTypesClientMethodParams,
 	): Promise<TCustomType[]> {
 		return await this.fetch<TCustomType[]>("", params);
 	}
+
+	/**
+	 * @deprecated Renamed to `getCustomTypeByID`.
+	 */
+	// TODO: Remove in v1.
+	getByID = this.getCustomTypeByID.bind(this);
 
 	/**
 	 * Returns a Custom Type model with a given ID from the Prismic repository.
@@ -156,12 +168,18 @@ export class CustomTypesClient {
 	 * @throws {@link NotFoundError} Thrown if a Custom Type with the given ID
 	 *   cannot be found.
 	 */
-	async getByID<TCustomType extends prismicT.CustomTypeModel>(
+	async getCustomTypeByID<TCustomType extends prismicT.CustomTypeModel>(
 		id: string,
 		params?: CustomTypesClientMethodParams,
 	): Promise<TCustomType> {
 		return await this.fetch<TCustomType>(id, params);
 	}
+
+	/**
+	 * @deprecated Renamed to `insertCustomType`.
+	 */
+	// TODO: Remove in v1.
+	insert = this.insertCustomType.bind(this);
 
 	/**
 	 * Inserts a Custom Type model to the Prismic repository.
@@ -176,7 +194,7 @@ export class CustomTypesClient {
 	 * @throws {@link ConflictError} Thrown if a Custom Type with the given ID
 	 *   already exists.
 	 */
-	async insert<TCustomType extends prismicT.CustomTypeModel>(
+	async insertCustomType<TCustomType extends prismicT.CustomTypeModel>(
 		customType: TCustomType,
 		params?: CustomTypesClientMethodParams,
 	): Promise<TCustomType> {
@@ -188,6 +206,12 @@ export class CustomTypesClient {
 
 		return customType;
 	}
+
+	/**
+	 * @deprecated Renamed to `updateCustomType`.
+	 */
+	// TODO: Remove in v1.
+	update = this.updateCustomType.bind(this);
 
 	/**
 	 * Updates a Custom Type model from the Prismic repository.
@@ -202,7 +226,7 @@ export class CustomTypesClient {
 	 * @throws {@link NotFoundError} Thrown if a Custom Type with the given ID
 	 *   cannot be found.
 	 */
-	async update<TCustomType extends prismicT.CustomTypeModel>(
+	async updateCustomType<TCustomType extends prismicT.CustomTypeModel>(
 		customType: TCustomType,
 		params?: CustomTypesClientMethodParams,
 	): Promise<TCustomType> {
@@ -216,6 +240,12 @@ export class CustomTypesClient {
 	}
 
 	/**
+	 * @deprecated Renamed to `removeCustomType`.
+	 */
+	// TODO: Remove in v1.
+	remove = this.removeCustomType.bind(this);
+
+	/**
 	 * Removes a Custom Type model from the Prismic repository.
 	 *
 	 * @typeParam TCustomTypeID - The ID of the Custom Type.
@@ -225,7 +255,7 @@ export class CustomTypesClient {
 	 * @returns The ID of the removed Custom Type.
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
 	 */
-	async remove<TCustomTypeID extends string>(
+	async removeCustomType<TCustomTypeID extends string>(
 		id: TCustomTypeID,
 		params?: CustomTypesClientMethodParams,
 	): Promise<TCustomTypeID> {

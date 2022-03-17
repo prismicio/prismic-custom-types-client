@@ -33,7 +33,7 @@ test("returns a Custom Type by ID", async (t) => {
 		),
 	);
 
-	const res = await client.getByID(customType.id);
+	const res = await client.getCustomTypeByID(customType.id);
 
 	t.deepEqual(res, customType);
 });
@@ -63,7 +63,7 @@ test("uses params if provided", async (t) => {
 		),
 	);
 
-	const res = await client.getByID(customType.id, params);
+	const res = await client.getCustomTypeByID(customType.id, params);
 
 	t.deepEqual(res, customType);
 });
@@ -88,7 +88,10 @@ test("throws NotFoundError if a matching Custom Type was not found", async (t) =
 		),
 	);
 
-	await t.throwsAsync(async () => await client.getByID(customType.id), {
-		instanceOf: prismicCustomTypes.NotFoundError,
-	});
+	await t.throwsAsync(
+		async () => await client.getCustomTypeByID(customType.id),
+		{
+			instanceOf: prismicCustomTypes.NotFoundError,
+		},
+	);
 });

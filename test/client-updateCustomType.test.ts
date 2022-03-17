@@ -33,7 +33,7 @@ test("updates a Custom Type", async (t) => {
 		}),
 	);
 
-	const res = await client.update(customType);
+	const res = await client.updateCustomType(customType);
 
 	t.deepEqual(res, customType);
 });
@@ -62,7 +62,7 @@ test("uses params if provided", async (t) => {
 		}),
 	);
 
-	const res = await client.update(customType, params);
+	const res = await client.updateCustomType(customType, params);
 
 	t.deepEqual(res, customType);
 });
@@ -86,7 +86,7 @@ test("throws NotFoundError if a matching Custom Type was not found", async (t) =
 		}),
 	);
 
-	await t.throwsAsync(async () => await client.update(customType), {
+	await t.throwsAsync(async () => await client.updateCustomType(customType), {
 		instanceOf: prismicCustomTypes.NotFoundError,
 	});
 });
@@ -111,7 +111,7 @@ test("throws InvalidPayloadError if an invalid Custom Type is sent", async (t) =
 		}),
 	);
 
-	await t.throwsAsync(async () => await client.update(customType), {
+	await t.throwsAsync(async () => await client.updateCustomType(customType), {
 		instanceOf: prismicCustomTypes.InvalidPayloadError,
 		message,
 	});
