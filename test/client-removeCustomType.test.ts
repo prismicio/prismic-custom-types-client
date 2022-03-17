@@ -33,7 +33,7 @@ test("removes a Custom Type", async (t) => {
 		),
 	);
 
-	const res = await client.remove(customType.id);
+	const res = await client.removeCustomType(customType.id);
 
 	t.deepEqual(res, customType.id);
 });
@@ -63,7 +63,7 @@ test("uses params if provided", async (t) => {
 		),
 	);
 
-	const res = await client.remove(customType.id, params);
+	const res = await client.removeCustomType(customType.id, params);
 
 	t.deepEqual(res, customType.id);
 });

@@ -29,7 +29,7 @@ test("returns all Custom Types", async (t) => {
 		}),
 	);
 
-	const res = await client.getAll();
+	const res = await client.getAllCustomTypes();
 
 	t.deepEqual(res, queryResponse);
 });
@@ -56,7 +56,7 @@ test("uses params if provided", async (t) => {
 		}),
 	);
 
-	const res = await client.getAll(params);
+	const res = await client.getAllCustomTypes(params);
 
 	t.deepEqual(res, queryResponse);
 });

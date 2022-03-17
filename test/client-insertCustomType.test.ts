@@ -33,7 +33,7 @@ test("inserts a Custom Type", async (t) => {
 		}),
 	);
 
-	const res = await client.insert(customType);
+	const res = await client.insertCustomType(customType);
 
 	t.deepEqual(res, customType);
 });
@@ -62,7 +62,7 @@ test("uses params if provided", async (t) => {
 		}),
 	);
 
-	const res = await client.insert(customType, params);
+	const res = await client.insertCustomType(customType, params);
 
 	t.deepEqual(res, customType);
 });
@@ -86,7 +86,7 @@ test("throws ConflictError if a Custom Type with the same ID already exists", as
 		}),
 	);
 
-	await t.throwsAsync(async () => await client.insert(customType), {
+	await t.throwsAsync(async () => await client.insertCustomType(customType), {
 		instanceOf: prismicCustomTypes.ConflictError,
 	});
 });
@@ -111,7 +111,7 @@ test("throws InvalidPayloadError if an invalid Custom Type is sent", async (t) =
 		}),
 	);
 
-	await t.throwsAsync(async () => await client.insert(customType), {
+	await t.throwsAsync(async () => await client.insertCustomType(customType), {
 		instanceOf: prismicCustomTypes.InvalidPayloadError,
 		message,
 	});

@@ -92,7 +92,7 @@ test("throws ForbiddenError if unauthorized", async (t) => {
 		}),
 	);
 
-	await t.throwsAsync(async () => await client.getAll(), {
+	await t.throwsAsync(async () => await client.getAllCustomTypes(), {
 		instanceOf: prismicCustomTypes.ForbiddenError,
 	});
 });
@@ -108,7 +108,7 @@ test("throws PrismicError if an unsupported response is returned", async (t) => 
 		}),
 	);
 
-	await t.throwsAsync(async () => await client.getAll(), {
+	await t.throwsAsync(async () => await client.getAllCustomTypes(), {
 		instanceOf: prismicCustomTypes.PrismicError,
 	});
 });
