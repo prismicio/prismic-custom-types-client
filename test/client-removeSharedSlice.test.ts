@@ -1,23 +1,17 @@
-import test from "ava";
+import { test, expect } from "vitest";
 import * as msw from "msw";
-import * as mswNode from "msw/node";
 
 import { createClient } from "./__testutils__/createClient";
-import { createSharedSlice } from "./__testutils__/createSharedSlice";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
 
 import * as prismicCustomTypes from "../src";
 import { resolveURL } from "./__testutils__/resolveURL";
 
-const server = mswNode.setupServer();
-test.before(() => server.listen({ onUnhandledRequest: "error" }));
-test.after(() => server.close());
+test("removes a Shared Slice", async (ctx) => {
+	const sharedSlice = ctx.mock.model.sharedSlice();
+	const client = createClient(ctx);
 
-test("removes a Shared Slice", async (t) => {
-	const sharedSlice = createSharedSlice();
-	const client = createClient(t);
-
-	server.use(
+	ctx.server.use(
 		msw.rest.delete(
 			resolveURL(client.endpoint, `/slices/${sharedSlice.id}`),
 			(req, res, ctx) => {
@@ -35,19 +29,19 @@ test("removes a Shared Slice", async (t) => {
 
 	const res = await client.removeSharedSlice(sharedSlice.id);
 
-	t.deepEqual(res, sharedSlice.id);
+	expect(res).toBe(sharedSlice.id);
 });
 
-test("uses params if provided", async (t) => {
-	const sharedSlice = createSharedSlice();
-	const client = createClient(t);
+test("uses params if provided", async (ctx) => {
+	const sharedSlice = ctx.mock.model.sharedSlice();
+	const client = createClient(ctx);
 	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
 	};
 
-	server.use(
+	ctx.server.use(
 		msw.rest.delete(
 			resolveURL(params.endpoint, `/slices/${sharedSlice.id}`),
 			(req, res, ctx) => {
@@ -65,7 +59,18 @@ test("uses params if provided", async (t) => {
 
 	const res = await client.removeSharedSlice(sharedSlice.id, params);
 
-	t.deepEqual(res, sharedSlice.id);
+	expect(res).toBe(sharedSlice.id);
+});
+
+test("is abortable", async (ctx) => {
+	const client = createClient(ctx);
+
+	const controller = new AbortController();
+	controller.abort();
+
+	await expect(async () => {
+		await client.removeSharedSlice("id", { signal: controller.signal });
+	}).rejects.toThrow(/aborted/i);
 });
 
 // NOTE: The API does not return a 4xx status code if a non-existing Shared

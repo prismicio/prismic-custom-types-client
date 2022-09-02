@@ -1,23 +1,17 @@
-import test from "ava";
+import { test, expect } from "vitest";
 import * as msw from "msw";
-import * as mswNode from "msw/node";
 
 import { createClient } from "./__testutils__/createClient";
-import { createSharedSlice } from "./__testutils__/createSharedSlice";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
 
 import * as prismicCustomTypes from "../src";
 import { resolveURL } from "./__testutils__/resolveURL";
 
-const server = mswNode.setupServer();
-test.before(() => server.listen({ onUnhandledRequest: "error" }));
-test.after(() => server.close());
+test("returns a Shared Slice by ID", async (ctx) => {
+	const sharedSlice = ctx.mock.model.sharedSlice();
+	const client = createClient(ctx);
 
-test("returns a Shared Slice by ID", async (t) => {
-	const sharedSlice = createSharedSlice();
-	const client = createClient(t);
-
-	server.use(
+	ctx.server.use(
 		msw.rest.get(
 			resolveURL(client.endpoint, `/slices/${sharedSlice.id}`),
 			(req, res, ctx) => {
@@ -35,19 +29,19 @@ test("returns a Shared Slice by ID", async (t) => {
 
 	const res = await client.getSharedSliceByID(sharedSlice.id);
 
-	t.deepEqual(res, sharedSlice);
+	expect(res).toStrictEqual(sharedSlice);
 });
 
-test("uses params if provided", async (t) => {
-	const sharedSlice = createSharedSlice();
-	const client = createClient(t);
+test("uses params if provided", async (ctx) => {
+	const sharedSlice = ctx.mock.model.sharedSlice();
+	const client = createClient(ctx);
 	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
 	};
 
-	server.use(
+	ctx.server.use(
 		msw.rest.get(
 			resolveURL(params.endpoint, `/slices/${sharedSlice.id}`),
 			(req, res, ctx) => {
@@ -65,14 +59,14 @@ test("uses params if provided", async (t) => {
 
 	const res = await client.getSharedSliceByID(sharedSlice.id, params);
 
-	t.deepEqual(res, sharedSlice);
+	expect(res).toStrictEqual(sharedSlice);
 });
 
-test("throws NotFoundError if a matching Custom Type was not found", async (t) => {
-	const sharedSlice = createSharedSlice();
-	const client = createClient(t);
+test("throws NotFoundError if a matching Custom Type was not found", async (ctx) => {
+	const sharedSlice = ctx.mock.model.sharedSlice();
+	const client = createClient(ctx);
 
-	server.use(
+	ctx.server.use(
 		msw.rest.get(
 			resolveURL(client.endpoint, `/slices/${sharedSlice.id}`),
 			(req, res, ctx) => {
@@ -88,10 +82,18 @@ test("throws NotFoundError if a matching Custom Type was not found", async (t) =
 		),
 	);
 
-	await t.throwsAsync(
-		async () => await client.getSharedSliceByID(sharedSlice.id),
-		{
-			instanceOf: prismicCustomTypes.NotFoundError,
-		},
-	);
+	await expect(async () => {
+		await client.getSharedSliceByID(sharedSlice.id);
+	}).rejects.toThrow(prismicCustomTypes.NotFoundError);
+});
+
+test("is abortable", async (ctx) => {
+	const controller = new AbortController();
+	controller.abort();
+
+	const client = createClient(ctx);
+
+	await expect(async () => {
+		await client.getSharedSliceByID("id", { signal: controller.signal });
+	}).rejects.toThrow(/aborted/i);
 });
