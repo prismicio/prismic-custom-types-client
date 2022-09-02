@@ -19,25 +19,25 @@ const main = async () => {
 	});
 
 	// Get all Custom Type models from the repository.
-	const models = await customTypesClient.getAll();
+	const models = await customTypesClient.getAllCustomTypes();
 	console.info({ models });
 
 	// Get the "page" Custom Type model from the repository.
-	const pageModel = await customTypesClient.getByID("page");
+	const pageModel = await customTypesClient.getCustomTypeByID("page");
 	console.info({ pageModel });
 
 	// Update the "page" Custom Type model from the repository.
 	// This example disables the model from new documents being created.
-	await customTypesClient.update({
+	await customTypesClient.updateCustomType({
 		...pageModel,
 		status: false,
 	});
 
 	// Remove the "page" Custom Type model from the repository.
-	await customTypesClient.remove("page");
+	await customTypesClient.removeCustomType("page");
 
 	// Re-add the "page" Custom Type model.
-	await customTypesClient.insert(pageModel);
+	await customTypesClient.insertCustomType(pageModel);
 };
 
 main();

@@ -1,6 +1,6 @@
-import * as prismicT from "@prismicio/types";
+import type * as prismicT from "@prismicio/types";
 
-import { FetchLike, RequestInitLike } from "./types";
+import type { AbortSignalLike, FetchLike, RequestInitLike } from "./types";
 import {
 	PrismicError,
 	MissingFetchError,
@@ -54,6 +54,20 @@ export type CustomTypesClientMethodParams = Partial<
 >;
 
 /**
+ * Parameters for any client method that use `fetch()`. Only a subset of
+ * `fetch()` parameters are exposed.
+ */
+type FetchParams = {
+	/**
+	 * An `AbortSignal` provided by an `AbortController`. This allows the network
+	 * request to be cancelled if necessary.
+	 *
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal}
+	 */
+	signal?: AbortSignalLike;
+};
+
+/**
  * Create a `RequestInit` object for a POST `fetch` request. The provided body
  * will be run through `JSON.stringify`.
  *
@@ -63,7 +77,7 @@ export type CustomTypesClientMethodParams = Partial<
  */
 const createPostFetchRequestInit = <T>(body: T): RequestInitLike => {
 	return {
-		method: "post",
+		method: "POST",
 		body: JSON.stringify(body),
 	};
 };
@@ -142,10 +156,11 @@ export class CustomTypesClient {
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns All Custom Type models from the Prismic repository.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
 	 */
 	async getAllCustomTypes<TCustomType extends prismicT.CustomTypeModel>(
-		params?: CustomTypesClientMethodParams,
+		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType[]> {
 		return await this.fetch<TCustomType[]>("", params);
 	}
@@ -164,13 +179,14 @@ export class CustomTypesClient {
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The Custom Type model from the Prismic repository.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
 	 * @throws {@link NotFoundError} Thrown if a Custom Type with the given ID
 	 *   cannot be found.
 	 */
 	async getCustomTypeByID<TCustomType extends prismicT.CustomTypeModel>(
 		id: string,
-		params?: CustomTypesClientMethodParams,
+		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType> {
 		return await this.fetch<TCustomType>(id, params);
 	}
@@ -189,14 +205,16 @@ export class CustomTypesClient {
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The inserted Custom Type.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
-	 * @throws {@link InvalidPayloadError} Thrown if an invalid Custom Type is provided.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
+	 * @throws {@link InvalidPayloadError} Thrown if an invalid Custom Type is
+	 *   provided.
 	 * @throws {@link ConflictError} Thrown if a Custom Type with the given ID
 	 *   already exists.
 	 */
 	async insertCustomType<TCustomType extends prismicT.CustomTypeModel>(
 		customType: TCustomType,
-		params?: CustomTypesClientMethodParams,
+		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType> {
 		await this.fetch<undefined>(
 			"insert",
@@ -221,14 +239,16 @@ export class CustomTypesClient {
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The updated Custom Type.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
-	 * @throws {@link InvalidPayloadError} Thrown if an invalid Custom Type is provided.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
+	 * @throws {@link InvalidPayloadError} Thrown if an invalid Custom Type is
+	 *   provided.
 	 * @throws {@link NotFoundError} Thrown if a Custom Type with the given ID
 	 *   cannot be found.
 	 */
 	async updateCustomType<TCustomType extends prismicT.CustomTypeModel>(
 		customType: TCustomType,
-		params?: CustomTypesClientMethodParams,
+		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType> {
 		await this.fetch<undefined>(
 			"update",
@@ -253,14 +273,15 @@ export class CustomTypesClient {
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The ID of the removed Custom Type.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
 	 */
 	async removeCustomType<TCustomTypeID extends string>(
 		id: TCustomTypeID,
-		params?: CustomTypesClientMethodParams,
+		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomTypeID> {
 		await this.fetch<undefined>(id, params, {
-			method: "delete",
+			method: "DELETE",
 		});
 
 		return id;
@@ -269,14 +290,16 @@ export class CustomTypesClient {
 	/**
 	 * Returns all Shared Slice models from the Prismic repository.
 	 *
-	 * @typeParam TSharedSliceModel - The Shared Slice model returned from the API.
+	 * @typeParam TSharedSliceModel - The Shared Slice model returned from the
+	 *   API.
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns All Shared Slice models from the Prismic repository.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
 	 */
 	async getAllSharedSlices<TSharedSliceModel extends prismicT.SharedSliceModel>(
-		params?: CustomTypesClientMethodParams,
+		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel[]> {
 		return await this.fetch<TSharedSliceModel[]>("/slices", params);
 	}
@@ -284,18 +307,20 @@ export class CustomTypesClient {
 	/**
 	 * Returns a Shared Slice model with a given ID from the Prismic repository.
 	 *
-	 * @typeParam TSharedSliceModel - The Shared Slice model returned from the API.
+	 * @typeParam TSharedSliceModel - The Shared Slice model returned from the
+	 *   API.
 	 * @param id - ID of the Shared Slice.
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The Shared Slice model from the Prismic repository.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
 	 * @throws {@link NotFoundError} Thrown if a Shared Slice with the given ID
 	 *   cannot be found.
 	 */
 	async getSharedSliceByID<TSharedSliceModel extends prismicT.SharedSliceModel>(
 		id: string,
-		params?: CustomTypesClientMethodParams,
+		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel> {
 		return await this.fetch<TSharedSliceModel>(`/slices/${id}`, params);
 	}
@@ -308,7 +333,8 @@ export class CustomTypesClient {
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The inserted Shared Slice model.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
 	 * @throws {@link InvalidPayloadError} Thrown if an invalid Shared Slice model
 	 *   is provided.
 	 * @throws {@link ConflictError} Thrown if a Shared Slice with the given ID
@@ -316,7 +342,7 @@ export class CustomTypesClient {
 	 */
 	async insertSharedSlice<TSharedSliceModel extends prismicT.SharedSliceModel>(
 		slice: TSharedSliceModel,
-		params?: CustomTypesClientMethodParams,
+		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel> {
 		await this.fetch(
 			"/slices/insert",
@@ -335,7 +361,8 @@ export class CustomTypesClient {
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The updated Shared Slice model.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
 	 * @throws {@link InvalidPayloadError} Thrown if an invalid Shared Slice model
 	 *   is provided.
 	 * @throws {@link NotFoundError} Thrown if a Shared Slice with the given ID
@@ -343,7 +370,7 @@ export class CustomTypesClient {
 	 */
 	async updateSharedSlice<TSharedSliceModel extends prismicT.SharedSliceModel>(
 		slice: TSharedSliceModel,
-		params?: CustomTypesClientMethodParams,
+		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel> {
 		await this.fetch(
 			"/slices/update",
@@ -362,14 +389,15 @@ export class CustomTypesClient {
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The ID of the removed Shared Slice.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
 	 */
 	async removeSharedSlice<TSharedSliceID extends string>(
 		id: TSharedSliceID,
-		params?: CustomTypesClientMethodParams,
+		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceID> {
 		await this.fetch(`/slices/${id}`, params, {
-			method: "delete",
+			method: "DELETE",
 		});
 
 		return id;
@@ -381,19 +409,22 @@ export class CustomTypesClient {
 	 * normalizes unsuccessful network requests.
 	 *
 	 * @typeParam T - The JSON response.
-	 * @param url - URL to the resource to fetch.
+	 * @param path - URL to the resource to fetch.
 	 * @param params - Parameters to override the client's default configuration.
 	 * @param requestInit - `RequestInit` overrides for the `fetch` request.
 	 *
 	 * @returns The response from the network request, if any.
-	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make requests.
+	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
+	 *   requests.
 	 * @throws {@link InvalidPayloadError} Thrown if the given body is invalid.
-	 * @throws {@link ConflictError} Thrown if an entity with the given ID already exists.
-	 * @throws {@link NotFoundError} Thrown if the requested entity could not be found.
+	 * @throws {@link ConflictError} Thrown if an entity with the given ID already
+	 *   exists.
+	 * @throws {@link NotFoundError} Thrown if the requested entity could not be
+	 *   found.
 	 */
 	private async fetch<T = unknown>(
 		path: string,
-		params: Partial<CustomTypesClientMethodParams> = {},
+		params: Partial<CustomTypesClientMethodParams> & FetchParams = {},
 		requestInit: RequestInitLike = {},
 	): Promise<T> {
 		const url = new URL(
@@ -407,6 +438,7 @@ export class CustomTypesClient {
 				repository: params.repositoryName || this.repositoryName,
 				Authorization: `Bearer ${params.token || this.token}`,
 			},
+			signal: params.signal,
 			...requestInit,
 		});
 

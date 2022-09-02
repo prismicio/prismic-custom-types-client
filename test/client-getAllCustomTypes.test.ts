@@ -1,22 +1,16 @@
-import test from "ava";
+import { test, expect } from "vitest";
 import * as msw from "msw";
-import * as mswNode from "msw/node";
 
 import { createClient } from "./__testutils__/createClient";
-import { createCustomType } from "./__testutils__/createCustomType";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
 
 import * as prismicCustomTypes from "../src";
 
-const server = mswNode.setupServer();
-test.before(() => server.listen({ onUnhandledRequest: "error" }));
-test.after(() => server.close());
+test("returns all Custom Types", async (ctx) => {
+	const queryResponse = [ctx.mock.model.customType()];
+	const client = createClient(ctx);
 
-test("returns all Custom Types", async (t) => {
-	const queryResponse = [createCustomType()];
-	const client = createClient(t);
-
-	server.use(
+	ctx.server.use(
 		msw.rest.get(client.endpoint, (req, res, ctx) => {
 			if (!isAuthorizedRequest(client, req)) {
 				return res(
@@ -31,19 +25,19 @@ test("returns all Custom Types", async (t) => {
 
 	const res = await client.getAllCustomTypes();
 
-	t.deepEqual(res, queryResponse);
+	expect(res).toStrictEqual(queryResponse);
 });
 
-test("uses params if provided", async (t) => {
-	const queryResponse = [createCustomType()];
-	const client = createClient(t);
+test("uses params if provided", async (ctx) => {
+	const queryResponse = [ctx.mock.model.customType()];
+	const client = createClient(ctx);
 	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
 	};
 
-	server.use(
+	ctx.server.use(
 		msw.rest.get(params.endpoint, (req, res, ctx) => {
 			if (!isAuthorizedRequest(params, req)) {
 				return res(
@@ -58,5 +52,16 @@ test("uses params if provided", async (t) => {
 
 	const res = await client.getAllCustomTypes(params);
 
-	t.deepEqual(res, queryResponse);
+	expect(res).toStrictEqual(queryResponse);
+});
+
+test("is abortable", async (ctx) => {
+	const controller = new AbortController();
+	controller.abort();
+
+	const client = createClient(ctx);
+
+	await expect(async () => {
+		await client.getAllCustomTypes({ signal: controller.signal });
+	}).rejects.toThrow(/aborted/i);
 });

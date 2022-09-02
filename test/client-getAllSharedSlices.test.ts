@@ -1,23 +1,17 @@
-import test from "ava";
+import { test, expect } from "vitest";
 import * as msw from "msw";
-import * as mswNode from "msw/node";
 
 import { createClient } from "./__testutils__/createClient";
-import { createSharedSlice } from "./__testutils__/createSharedSlice";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
 import { resolveURL } from "./__testutils__/resolveURL";
 
 import * as prismicCustomTypes from "../src";
 
-const server = mswNode.setupServer();
-test.before(() => server.listen({ onUnhandledRequest: "error" }));
-test.after(() => server.close());
+test("returns all Shared Slices", async (ctx) => {
+	const queryResponse = [ctx.mock.model.sharedSlice()];
+	const client = createClient(ctx);
 
-test("returns all Shared Slices", async (t) => {
-	const queryResponse = [createSharedSlice()];
-	const client = createClient(t);
-
-	server.use(
+	ctx.server.use(
 		msw.rest.get(resolveURL(client.endpoint, "/slices"), (req, res, ctx) => {
 			if (!isAuthorizedRequest(client, req)) {
 				return res(
@@ -32,19 +26,19 @@ test("returns all Shared Slices", async (t) => {
 
 	const res = await client.getAllSharedSlices();
 
-	t.deepEqual(res, queryResponse);
+	expect(res).toStrictEqual(queryResponse);
 });
 
-test("uses params if provided", async (t) => {
-	const queryResponse = [createSharedSlice()];
-	const client = createClient(t);
+test("uses params if provided", async (ctx) => {
+	const queryResponse = [ctx.mock.model.sharedSlice()];
+	const client = createClient(ctx);
 	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
 	};
 
-	server.use(
+	ctx.server.use(
 		msw.rest.get(resolveURL(params.endpoint, "/slices"), (req, res, ctx) => {
 			if (!isAuthorizedRequest(params, req)) {
 				return res(
@@ -59,5 +53,16 @@ test("uses params if provided", async (t) => {
 
 	const res = await client.getAllSharedSlices(params);
 
-	t.deepEqual(res, queryResponse);
+	expect(res).toStrictEqual(queryResponse);
+});
+
+test("is abortable", async (ctx) => {
+	const controller = new AbortController();
+	controller.abort();
+
+	const client = createClient(ctx);
+
+	await expect(async () => {
+		await client.getAllSharedSlices({ signal: controller.signal });
+	}).rejects.toThrow(/aborted/i);
 });
