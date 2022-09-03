@@ -73,7 +73,7 @@ export class NotFoundError extends PrismicError {}
 /**
  * Represents an error when the provided data is invalid.
  */
-export class InvalidPayloadError extends PrismicError {}
+export class InvalidPayloadError extends PrismicError<string> {}
 
 /**
  * Represents an error when a valid `fetch` function is not available to the

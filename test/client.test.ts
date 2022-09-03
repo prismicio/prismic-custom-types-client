@@ -37,9 +37,15 @@ test("constructor throws MissingFetchError if fetch is unavailable", (ctx) => {
 	const config = createClientConfig(ctx);
 	delete config.fetch;
 
+	const originalFetch = globalThis.fetch;
+	// @ts-expect-error - Forcing fetch to be undefined
+	delete globalThis.fetch;
+
 	expect(() => {
 		prismicCustomTypes.createClient(config);
 	}).toThrow(prismicCustomTypes.MissingFetchError);
+
+	globalThis.fetch = originalFetch;
 });
 
 // We wouldn't normally test for input types since TypeScript handles that for
@@ -49,9 +55,15 @@ test("constructor throws MissingFetchError if provided fetch is not a function",
 	// @ts-expect-error - We are purposly providing an invalid type to test if it throws.
 	config.fetch = "not a function";
 
+	const originalFetch = globalThis.fetch;
+	// @ts-expect-error - Forcing fetch to be undefined
+	delete globalThis.fetch;
+
 	expect(() => {
 		prismicCustomTypes.createClient(config);
 	}).toThrow(prismicCustomTypes.MissingFetchError);
+
+	globalThis.fetch = originalFetch;
 });
 
 test("uses globalThis.fetch if available", async (ctx) => {

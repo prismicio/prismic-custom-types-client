@@ -144,12 +144,6 @@ export class CustomTypesClient {
 	}
 
 	/**
-	 * @deprecated Renamed to `getAllCustomTypes`.
-	 */
-	// TODO: Remove in v1.
-	getAll = this.getAllCustomTypes.bind(this);
-
-	/**
 	 * Returns all Custom Types models from the Prismic repository.
 	 *
 	 * @typeParam TCustomType - The Custom Type returned from the API.
@@ -164,12 +158,6 @@ export class CustomTypesClient {
 	): Promise<TCustomType[]> {
 		return await this.fetch<TCustomType[]>("", params);
 	}
-
-	/**
-	 * @deprecated Renamed to `getCustomTypeByID`.
-	 */
-	// TODO: Remove in v1.
-	getByID = this.getCustomTypeByID.bind(this);
 
 	/**
 	 * Returns a Custom Type model with a given ID from the Prismic repository.
@@ -190,12 +178,6 @@ export class CustomTypesClient {
 	): Promise<TCustomType> {
 		return await this.fetch<TCustomType>(id, params);
 	}
-
-	/**
-	 * @deprecated Renamed to `insertCustomType`.
-	 */
-	// TODO: Remove in v1.
-	insert = this.insertCustomType.bind(this);
 
 	/**
 	 * Inserts a Custom Type model to the Prismic repository.
@@ -226,12 +208,6 @@ export class CustomTypesClient {
 	}
 
 	/**
-	 * @deprecated Renamed to `updateCustomType`.
-	 */
-	// TODO: Remove in v1.
-	update = this.updateCustomType.bind(this);
-
-	/**
 	 * Updates a Custom Type model from the Prismic repository.
 	 *
 	 * @typeParam TCustomType - The updated Custom Type.
@@ -258,12 +234,6 @@ export class CustomTypesClient {
 
 		return customType;
 	}
-
-	/**
-	 * @deprecated Renamed to `removeCustomType`.
-	 */
-	// TODO: Remove in v1.
-	remove = this.removeCustomType.bind(this);
 
 	/**
 	 * Removes a Custom Type model from the Prismic repository.
