@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/prismicio/prismic-custom-types-client/compare/v0.0.7...v1.0.0) (2022-09-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove deprecated `getAll()`, `getByID()`, `insert()`, `update()`, and `remove()` methods (#4)
+
+### Features
+
+* remove deprecated `getAll()`, `getByID()`, `insert()`, `update()`, and `remove()` methods ([#4](https://github.com/prismicio/prismic-custom-types-client/issues/4)) ([05dcb18](https://github.com/prismicio/prismic-custom-types-client/commit/05dcb187d4a55fe7f5090b61101020b26867dc5d))
+
+
+### Bug Fixes
+
+* use narrower type for `FetchLike` ([#3](https://github.com/prismicio/prismic-custom-types-client/issues/3)) ([a62a894](https://github.com/prismicio/prismic-custom-types-client/commit/a62a89460c5bf0d4bd20c9efd9528bf6afa3d94a))
+
 ### [0.0.7](https://github.com/prismicio/prismic-custom-types-client/compare/v0.0.6...v0.0.7) (2022-03-17)
 
 
