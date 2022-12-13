@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.0](https://github.com/prismicio/prismic-custom-types-client/compare/v1.0.0...v1.1.0-alpha.0) (2022-12-13)
+
+
+### Features
+
+* allow easier class extension ([e2586c8](https://github.com/prismicio/prismic-custom-types-client/commit/e2586c8a2d49a8c13b7b8ee979b3efcba60cc077))
+
+
+### Chore
+
+* **deps:** maintain dependencies ([8669412](https://github.com/prismicio/prismic-custom-types-client/commit/866941214355aa3d0587e4b74a0a8194cf4399ac))
+
 ## [1.0.0](https://github.com/prismicio/prismic-custom-types-client/compare/v0.0.7...v1.0.0) (2022-09-03)
 
 
