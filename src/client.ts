@@ -392,7 +392,7 @@ export class CustomTypesClient {
 	 * @throws {@link NotFoundError} Thrown if the requested entity could not be
 	 *   found.
 	 */
-	private async fetch<T = unknown>(
+	protected async fetch<T = unknown>(
 		path: string,
 		params: Partial<CustomTypesClientMethodParams> & FetchParams = {},
 		requestInit: RequestInitLike = {},
