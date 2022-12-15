@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/prismicio/prismic-custom-types-client/compare/v1.1.0-alpha.0...v1.0.1) (2022-12-15)
+
+
+### Bug Fixes
+
+* don't append trailing slash twice to endpoint ([8154b96](https://github.com/prismicio/prismic-custom-types-client/commit/8154b962c5c9224a17dc3c746148745e284e493f))
+
+
+### Chore
+
+* undo class extension ([e70ef49](https://github.com/prismicio/prismic-custom-types-client/commit/e70ef494371a7d16e20bd91881a54ab93c6a00f2))
+
 ## [1.1.0-alpha.0](https://github.com/prismicio/prismic-custom-types-client/compare/v1.0.0...v1.1.0-alpha.0) (2022-12-13)
 
 
