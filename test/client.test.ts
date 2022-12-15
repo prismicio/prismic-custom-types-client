@@ -1,4 +1,4 @@
-import { test, expect } from "vitest";
+import { test, expect, vi } from "vitest";
 import * as msw from "msw";
 import { Response } from "node-fetch";
 
@@ -83,6 +83,55 @@ test("uses globalThis.fetch if available", async (ctx) => {
 	expect(jsonResponse).toStrictEqual(responseBody);
 
 	globalThis.fetch = existingFetch;
+});
+
+test("donesn't duplicate endpoint trailing slash", async (ctx) => {
+	const fetchSpy = vi.fn();
+	const client = createClient(ctx, { fetch: fetchSpy });
+
+	client.endpoint = "https://example.com";
+	try {
+		await client.getCustomTypeByID("foo");
+	} catch {
+		// Noop, we don't mock fetch fully / carry the request
+	}
+	expect(fetchSpy).toHaveBeenLastCalledWith(
+		"https://example.com/foo",
+		expect.any(Object),
+	);
+
+	client.endpoint = "https://example.com/";
+	try {
+		await client.getCustomTypeByID("foo");
+	} catch {
+		// Noop, we don't mock fetch fully / carry the request
+	}
+	expect(fetchSpy).toHaveBeenLastCalledWith(
+		"https://example.com/foo",
+		expect.any(Object),
+	);
+
+	client.endpoint = "https://example.com/api";
+	try {
+		await client.getCustomTypeByID("foo");
+	} catch {
+		// Noop, we don't mock fetch fully / carry the request
+	}
+	expect(fetchSpy).toHaveBeenLastCalledWith(
+		"https://example.com/api/foo",
+		expect.any(Object),
+	);
+
+	client.endpoint = "https://example.com/api/";
+	try {
+		await client.getCustomTypeByID("foo");
+	} catch {
+		// Noop, we don't mock fetch fully / carry the request
+	}
+	expect(fetchSpy).toHaveBeenLastCalledWith(
+		"https://example.com/api/foo",
+		expect.any(Object),
+	);
 });
 
 test("throws ForbiddenError if unauthorized", async (ctx) => {
