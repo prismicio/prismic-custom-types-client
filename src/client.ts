@@ -397,9 +397,10 @@ export class CustomTypesClient {
 		params: Partial<CustomTypesClientMethodParams> & FetchParams = {},
 		requestInit: RequestInitLike = {},
 	): Promise<T> {
+		const base = params.endpoint || this.endpoint;
 		const url = new URL(
 			path,
-			`${params.endpoint || this.endpoint}/`,
+			base.endsWith("/") ? base : `${base}/`,
 		).toString();
 
 		const res = await this.fetchFn(url, {
