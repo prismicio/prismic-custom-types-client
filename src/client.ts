@@ -13,8 +13,7 @@ import {
 /**
  * The default endpoint for the Prismic Custom Types API.
  */
-const DEFAULT_CUSTOM_TYPES_API_ENDPOINT =
-	"https://customtypes.prismic.io/customtypes";
+const DEFAULT_CUSTOM_TYPES_API_ENDPOINT = "https://customtypes.prismic.io";
 
 /**
  * Configuration for creating a `CustomTypesClient`.
@@ -103,6 +102,8 @@ export class CustomTypesClient {
 	/**
 	 * The Prismic Custom Types API endpoint for the repository. The standard
 	 * Custom Types API endpoint will be used if no value is provided.
+	 *
+	 * @defaultValue `https://customtypes.prismic.io`
 	 */
 	endpoint: string;
 
@@ -126,6 +127,19 @@ export class CustomTypesClient {
 		this.repositoryName = config.repositoryName;
 		this.endpoint = config.endpoint || DEFAULT_CUSTOM_TYPES_API_ENDPOINT;
 		this.token = config.token;
+
+		// TODO: Remove the following `if` statement in v2.
+		//
+		// v1 erroneously assumed `/customtypes` would be part of
+		// `this.endpoint`, forcing all custom endpoints to include
+		// `/customtypes`.
+		//
+		// The client no longer assumes `/customtypes`. This `if`
+		// statement ensures backwards compatibility with existing
+		// custom endpoints that includes `/customtypes`.
+		if (/\/customtypes\/?$/.test(this.endpoint)) {
+			this.endpoint = this.endpoint.replace(/\/customtypes\/?$/, "");
+		}
 
 		if (typeof config.fetch === "function") {
 			this.fetchFn = config.fetch;
@@ -156,7 +170,7 @@ export class CustomTypesClient {
 	async getAllCustomTypes<TCustomType extends prismicT.CustomTypeModel>(
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType[]> {
-		return await this.fetch<TCustomType[]>("", params);
+		return await this.fetch<TCustomType[]>("customtypes", params);
 	}
 
 	/**
@@ -176,7 +190,7 @@ export class CustomTypesClient {
 		id: string,
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType> {
-		return await this.fetch<TCustomType>(id, params);
+		return await this.fetch<TCustomType>(`customtypes/${id}`, params);
 	}
 
 	/**
@@ -199,7 +213,7 @@ export class CustomTypesClient {
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType> {
 		await this.fetch<undefined>(
-			"insert",
+			"customtypes/insert",
 			params,
 			createPostFetchRequestInit(customType),
 		);
@@ -227,7 +241,7 @@ export class CustomTypesClient {
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType> {
 		await this.fetch<undefined>(
-			"update",
+			"customtypes/update",
 			params,
 			createPostFetchRequestInit(customType),
 		);
@@ -250,7 +264,7 @@ export class CustomTypesClient {
 		id: TCustomTypeID,
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomTypeID> {
-		await this.fetch<undefined>(id, params, {
+		await this.fetch<undefined>(`customtypes/${id}`, params, {
 			method: "DELETE",
 		});
 
@@ -271,7 +285,7 @@ export class CustomTypesClient {
 	async getAllSharedSlices<TSharedSliceModel extends prismicT.SharedSliceModel>(
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel[]> {
-		return await this.fetch<TSharedSliceModel[]>("/slices", params);
+		return await this.fetch<TSharedSliceModel[]>("slices", params);
 	}
 
 	/**
@@ -292,7 +306,7 @@ export class CustomTypesClient {
 		id: string,
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel> {
-		return await this.fetch<TSharedSliceModel>(`/slices/${id}`, params);
+		return await this.fetch<TSharedSliceModel>(`slices/${id}`, params);
 	}
 
 	/**
@@ -315,7 +329,7 @@ export class CustomTypesClient {
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel> {
 		await this.fetch(
-			"/slices/insert",
+			"slices/insert",
 			params,
 			createPostFetchRequestInit(slice),
 		);
@@ -343,7 +357,7 @@ export class CustomTypesClient {
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel> {
 		await this.fetch(
-			"/slices/update",
+			"slices/update",
 			params,
 			createPostFetchRequestInit(slice),
 		);
@@ -366,7 +380,7 @@ export class CustomTypesClient {
 		id: TSharedSliceID,
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceID> {
-		await this.fetch(`/slices/${id}`, params, {
+		await this.fetch(`slices/${id}`, params, {
 			method: "DELETE",
 		});
 
@@ -397,10 +411,10 @@ export class CustomTypesClient {
 		params: Partial<CustomTypesClientMethodParams> & FetchParams = {},
 		requestInit: RequestInitLike = {},
 	): Promise<T> {
-		const base = params.endpoint || this.endpoint;
+		const endpoint = params.endpoint || this.endpoint;
 		const url = new URL(
 			path,
-			base.endsWith("/") ? base : `${base}/`,
+			endpoint.endsWith("/") ? endpoint : `${endpoint}/`,
 		).toString();
 
 		const res = await this.fetchFn(url, {

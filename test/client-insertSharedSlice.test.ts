@@ -6,7 +6,6 @@ import { createClient } from "./__testutils__/createClient";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
 
 import * as prismicCustomTypes from "../src";
-import { resolveURL } from "./__testutils__/resolveURL";
 
 test("inserts a Shared Slice", async (ctx) => {
 	const sharedSlice = ctx.mock.model.sharedSlice();
@@ -14,7 +13,7 @@ test("inserts a Shared Slice", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.post(
-			resolveURL(client.endpoint, "/slices/insert"),
+			new URL("slices/insert", client.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -46,7 +45,7 @@ test("uses params if provided", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.post(
-			resolveURL(params.endpoint, "/slices/insert"),
+			new URL("slices/insert", params.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(
@@ -73,7 +72,7 @@ test("throws ConflictError if a Custom Type with the same ID already exists", as
 
 	ctx.server.use(
 		msw.rest.post(
-			resolveURL(client.endpoint, "/slices/insert"),
+			new URL("slices/insert", client.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -101,7 +100,7 @@ test("throws InvalidPayloadError if an invalid Shared Slice is sent", async (ctx
 
 	ctx.server.use(
 		msw.rest.post(
-			resolveURL(client.endpoint, "/slices/insert"),
+			new URL("slices/insert", client.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(

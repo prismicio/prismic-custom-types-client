@@ -5,7 +5,6 @@ import { createClient } from "./__testutils__/createClient";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
 
 import * as prismicCustomTypes from "../src";
-import { resolveURL } from "./__testutils__/resolveURL";
 
 test("removes a Custom Type", async (ctx) => {
 	const customType = ctx.mock.model.customType();
@@ -13,7 +12,7 @@ test("removes a Custom Type", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.delete(
-			resolveURL(client.endpoint, customType.id),
+			new URL(`customtypes/${customType.id}`, client.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -43,7 +42,7 @@ test("uses params if provided", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.delete(
-			resolveURL(params.endpoint, customType.id),
+			new URL(`customtypes/${customType.id}`, params.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(

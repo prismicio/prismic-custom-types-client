@@ -30,7 +30,25 @@ test("uses the default endpoint if none is provided", (ctx) => {
 
 	const client = prismicCustomTypes.createClient(config);
 
-	expect(client.endpoint).toBe("https://customtypes.prismic.io/customtypes");
+	expect(client.endpoint).toBe("https://customtypes.prismic.io");
+});
+
+test("supports custom endpoints that include /customtypes (for backwards compatiblity)", (ctx) => {
+	const config = createClientConfig(ctx);
+	config.endpoint = "https://example.com/customtypes";
+
+	const client = prismicCustomTypes.createClient(config);
+
+	expect(client.endpoint).toBe("https://example.com");
+});
+
+test("supports custom endpoints that include /customtypes/ (for backwards compatiblity)", (ctx) => {
+	const config = createClientConfig(ctx);
+	config.endpoint = "https://example.com/customtypes/";
+
+	const client = prismicCustomTypes.createClient(config);
+
+	expect(client.endpoint).toBe("https://example.com");
 });
 
 test("constructor throws MissingFetchError if fetch is unavailable", (ctx) => {
@@ -85,7 +103,7 @@ test("uses globalThis.fetch if available", async (ctx) => {
 	globalThis.fetch = existingFetch;
 });
 
-test("donesn't duplicate endpoint trailing slash", async (ctx) => {
+test("doesn't duplicate endpoint trailing slash", async (ctx) => {
 	const fetchSpy = vi.fn();
 	const client = createClient(ctx, { fetch: fetchSpy });
 
@@ -96,7 +114,7 @@ test("donesn't duplicate endpoint trailing slash", async (ctx) => {
 		// Noop, we don't mock fetch fully / carry the request
 	}
 	expect(fetchSpy).toHaveBeenLastCalledWith(
-		"https://example.com/foo",
+		"https://example.com/customtypes/foo",
 		expect.any(Object),
 	);
 
@@ -107,7 +125,7 @@ test("donesn't duplicate endpoint trailing slash", async (ctx) => {
 		// Noop, we don't mock fetch fully / carry the request
 	}
 	expect(fetchSpy).toHaveBeenLastCalledWith(
-		"https://example.com/foo",
+		"https://example.com/customtypes/foo",
 		expect.any(Object),
 	);
 
@@ -118,7 +136,7 @@ test("donesn't duplicate endpoint trailing slash", async (ctx) => {
 		// Noop, we don't mock fetch fully / carry the request
 	}
 	expect(fetchSpy).toHaveBeenLastCalledWith(
-		"https://example.com/api/foo",
+		"https://example.com/api/customtypes/foo",
 		expect.any(Object),
 	);
 
@@ -129,7 +147,7 @@ test("donesn't duplicate endpoint trailing slash", async (ctx) => {
 		// Noop, we don't mock fetch fully / carry the request
 	}
 	expect(fetchSpy).toHaveBeenLastCalledWith(
-		"https://example.com/api/foo",
+		"https://example.com/api/customtypes/foo",
 		expect.any(Object),
 	);
 });
@@ -138,14 +156,17 @@ test("throws ForbiddenError if unauthorized", async (ctx) => {
 	const client = createClient(ctx);
 
 	ctx.server.use(
-		msw.rest.get(client.endpoint, (_req, res, ctx) => {
-			// We force the API to return a 403 status code to simulate an
-			// unauthorized request.
-			return res(
-				ctx.status(403),
-				ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-			);
-		}),
+		msw.rest.get(
+			new URL("customtypes", client.endpoint).toString(),
+			(_req, res, ctx) => {
+				// We force the API to return a 403 status code to simulate an
+				// unauthorized request.
+				return res(
+					ctx.status(403),
+					ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
+				);
+			},
+		),
 	);
 
 	await expect(async () => {
@@ -157,11 +178,14 @@ test("throws PrismicError if an unsupported response is returned", async (ctx) =
 	const client = createClient(ctx);
 
 	ctx.server.use(
-		msw.rest.get(client.endpoint, (_req, res, ctx) => {
-			// We force the API to return a 418 status code (I'm a teapot) to simulate
-			// an unsupported response.
-			return res(ctx.status(418));
-		}),
+		msw.rest.get(
+			new URL("customtypes", client.endpoint).toString(),
+			(_req, res, ctx) => {
+				// We force the API to return a 418 status code (I'm a teapot) to simulate
+				// an unsupported response.
+				return res(ctx.status(418));
+			},
+		),
 	);
 
 	await expect(async () => {

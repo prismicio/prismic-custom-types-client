@@ -11,16 +11,19 @@ test("returns all Custom Types", async (ctx) => {
 	const client = createClient(ctx);
 
 	ctx.server.use(
-		msw.rest.get(client.endpoint, (req, res, ctx) => {
-			if (!isAuthorizedRequest(client, req)) {
-				return res(
-					ctx.status(403),
-					ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-				);
-			}
+		msw.rest.get(
+			new URL("customtypes", client.endpoint).toString(),
+			(req, res, ctx) => {
+				if (!isAuthorizedRequest(client, req)) {
+					return res(
+						ctx.status(403),
+						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
+					);
+				}
 
-			return res(ctx.json(queryResponse));
-		}),
+				return res(ctx.json(queryResponse));
+			},
+		),
 	);
 
 	const res = await client.getAllCustomTypes();
@@ -38,16 +41,19 @@ test("uses params if provided", async (ctx) => {
 	};
 
 	ctx.server.use(
-		msw.rest.get(params.endpoint, (req, res, ctx) => {
-			if (!isAuthorizedRequest(params, req)) {
-				return res(
-					ctx.status(403),
-					ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-				);
-			}
+		msw.rest.get(
+			new URL("customtypes", params.endpoint).toString(),
+			(req, res, ctx) => {
+				if (!isAuthorizedRequest(params, req)) {
+					return res(
+						ctx.status(403),
+						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
+					);
+				}
 
-			return res(ctx.json(queryResponse));
-		}),
+				return res(ctx.json(queryResponse));
+			},
+		),
 	);
 
 	const res = await client.getAllCustomTypes(params);
