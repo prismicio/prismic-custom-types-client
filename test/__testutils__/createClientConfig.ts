@@ -13,7 +13,7 @@ export const createClientConfig = (
 		.update(ctx.meta.name)
 		.digest("hex");
 	const token = crypto.createHash("md5").update(repositoryName).digest("hex");
-	const endpoint = `https://${repositoryName}.example.com/customtypes`;
+	const endpoint = `https://${repositoryName}.example.com`;
 
 	return {
 		repositoryName,

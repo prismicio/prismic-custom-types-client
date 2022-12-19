@@ -5,7 +5,6 @@ import { createClient } from "./__testutils__/createClient";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
 
 import * as prismicCustomTypes from "../src";
-import { resolveURL } from "./__testutils__/resolveURL";
 
 test("returns a Shared Slice by ID", async (ctx) => {
 	const sharedSlice = ctx.mock.model.sharedSlice();
@@ -13,7 +12,7 @@ test("returns a Shared Slice by ID", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.get(
-			resolveURL(client.endpoint, `/slices/${sharedSlice.id}`),
+			new URL(`./slices/${sharedSlice.id}`, client.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -43,7 +42,7 @@ test("uses params if provided", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.get(
-			resolveURL(params.endpoint, `/slices/${sharedSlice.id}`),
+			new URL(`./slices/${sharedSlice.id}`, params.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(
@@ -68,7 +67,7 @@ test("throws NotFoundError if a matching Custom Type was not found", async (ctx)
 
 	ctx.server.use(
 		msw.rest.get(
-			resolveURL(client.endpoint, `/slices/${sharedSlice.id}`),
+			new URL(`./slices/${sharedSlice.id}`, client.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
