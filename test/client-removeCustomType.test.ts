@@ -12,7 +12,7 @@ test("removes a Custom Type", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.delete(
-			new URL(`customtypes/${customType.id}`, client.endpoint).toString(),
+			new URL(`./customtypes/${customType.id}`, client.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -42,7 +42,7 @@ test("uses params if provided", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.delete(
-			new URL(`customtypes/${customType.id}`, params.endpoint).toString(),
+			new URL(`./customtypes/${customType.id}`, params.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(

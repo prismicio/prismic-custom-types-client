@@ -12,7 +12,7 @@ test("returns all Shared Slices", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.get(
-			new URL("slices", client.endpoint).toString(),
+			new URL("./slices", client.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -42,7 +42,7 @@ test("uses params if provided", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.get(
-			new URL("slices", params.endpoint).toString(),
+			new URL("./slices", params.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(

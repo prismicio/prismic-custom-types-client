@@ -12,7 +12,7 @@ test("returns a Shared Slice by ID", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.get(
-			new URL(`slices/${sharedSlice.id}`, client.endpoint).toString(),
+			new URL(`./slices/${sharedSlice.id}`, client.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -42,7 +42,7 @@ test("uses params if provided", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.get(
-			new URL(`slices/${sharedSlice.id}`, params.endpoint).toString(),
+			new URL(`./slices/${sharedSlice.id}`, params.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(
@@ -67,7 +67,7 @@ test("throws NotFoundError if a matching Custom Type was not found", async (ctx)
 
 	ctx.server.use(
 		msw.rest.get(
-			new URL(`slices/${sharedSlice.id}`, client.endpoint).toString(),
+			new URL(`./slices/${sharedSlice.id}`, client.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(

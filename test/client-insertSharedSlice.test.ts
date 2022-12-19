@@ -13,7 +13,7 @@ test("inserts a Shared Slice", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.post(
-			new URL("slices/insert", client.endpoint).toString(),
+			new URL("./slices/insert", client.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -45,7 +45,7 @@ test("uses params if provided", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.post(
-			new URL("slices/insert", params.endpoint).toString(),
+			new URL("./slices/insert", params.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(
@@ -72,7 +72,7 @@ test("throws ConflictError if a Custom Type with the same ID already exists", as
 
 	ctx.server.use(
 		msw.rest.post(
-			new URL("slices/insert", client.endpoint).toString(),
+			new URL("./slices/insert", client.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -100,7 +100,7 @@ test("throws InvalidPayloadError if an invalid Shared Slice is sent", async (ctx
 
 	ctx.server.use(
 		msw.rest.post(
-			new URL("slices/insert", client.endpoint).toString(),
+			new URL("./slices/insert", client.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(

@@ -157,7 +157,7 @@ test("throws ForbiddenError if unauthorized", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.get(
-			new URL("customtypes", client.endpoint).toString(),
+			new URL("./customtypes", client.endpoint).toString(),
 			(_req, res, ctx) => {
 				// We force the API to return a 403 status code to simulate an
 				// unauthorized request.
@@ -179,7 +179,7 @@ test("throws PrismicError if an unsupported response is returned", async (ctx) =
 
 	ctx.server.use(
 		msw.rest.get(
-			new URL("customtypes", client.endpoint).toString(),
+			new URL("./customtypes", client.endpoint).toString(),
 			(_req, res, ctx) => {
 				// We force the API to return a 418 status code (I'm a teapot) to simulate
 				// an unsupported response.

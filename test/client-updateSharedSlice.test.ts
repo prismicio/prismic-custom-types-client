@@ -13,7 +13,7 @@ test("updates a Custom Type", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.post(
-			new URL("slices/update", client.endpoint).toString(),
+			new URL("./slices/update", client.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -45,7 +45,7 @@ test("uses params if provided", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.post(
-			new URL("slices/update", params.endpoint).toString(),
+			new URL("./slices/update", params.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(
@@ -72,7 +72,7 @@ test("throws NotFoundError if a matching Custom Type was not found", async (ctx)
 
 	ctx.server.use(
 		msw.rest.post(
-			new URL("slices/update", client.endpoint).toString(),
+			new URL("./slices/update", client.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -100,7 +100,7 @@ test("throws InvalidPayloadError if an invalid Shared Slice is sent", async (ctx
 
 	ctx.server.use(
 		msw.rest.post(
-			new URL("slices/update", client.endpoint).toString(),
+			new URL("./slices/update", client.endpoint).toString(),
 			async (req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(

@@ -12,7 +12,7 @@ test("returns all Custom Types", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.get(
-			new URL("customtypes", client.endpoint).toString(),
+			new URL("./customtypes", client.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(client, req)) {
 					return res(
@@ -42,7 +42,7 @@ test("uses params if provided", async (ctx) => {
 
 	ctx.server.use(
 		msw.rest.get(
-			new URL("customtypes", params.endpoint).toString(),
+			new URL("./customtypes", params.endpoint).toString(),
 			(req, res, ctx) => {
 				if (!isAuthorizedRequest(params, req)) {
 					return res(
