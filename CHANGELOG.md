@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.2](https://github.com/prismicio/prismic-custom-types-client/compare/v1.0.1...v1.0.2) (2022-12-19)
+
+
+### Bug Fixes
+
+* no longer require `/customtypes` in the `endpoint` option ([#6](https://github.com/prismicio/prismic-custom-types-client/issues/6)) ([62f1950](https://github.com/prismicio/prismic-custom-types-client/commit/62f195072f45d89c90777db955f52ad2fd4eea73))
+
 ### [1.0.1](https://github.com/prismicio/prismic-custom-types-client/compare/v1.1.0-alpha.0...v1.0.1) (2022-12-15)
 
 
