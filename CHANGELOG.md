@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.1](https://github.com/prismicio/prismic-custom-types-client/compare/v1.0.2...v1.1.0-alpha.1) (2023-03-27)
+
+
+### Features
+
+* support `401 Unauthorized` errors ([937aabd](https://github.com/prismicio/prismic-custom-types-client/commit/937aabd51843e0751c6a40e66f8e2a5d459459bd))
+
 ### [1.0.2](https://github.com/prismicio/prismic-custom-types-client/compare/v1.0.1...v1.0.2) (2022-12-19)
 
 
