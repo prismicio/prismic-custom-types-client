@@ -8,6 +8,7 @@ export {
 	PrismicError,
 	ConflictError,
 	ForbiddenError,
+	UnauthorizedError,
 	InvalidPayloadError,
 	MissingFetchError,
 	NotFoundError,

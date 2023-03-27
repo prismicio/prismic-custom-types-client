@@ -152,7 +152,26 @@ test("doesn't duplicate endpoint trailing slash", async (ctx) => {
 	);
 });
 
-test("throws ForbiddenError if unauthorized", async (ctx) => {
+test("throws UnauthorizedError if unauthorized", async (ctx) => {
+	const client = createClient(ctx);
+
+	ctx.server.use(
+		msw.rest.get(
+			new URL("./customtypes", client.endpoint).toString(),
+			(_req, res, ctx) => {
+				// We force the API to return a 403 status code to simulate an
+				// unauthorized request.
+				return res(ctx.status(401), ctx.text("[MOCK UNAUTHORIZED ERROR]"));
+			},
+		),
+	);
+
+	await expect(async () => {
+		await client.getAllCustomTypes();
+	}).rejects.toThrow(prismicCustomTypes.UnauthorizedError);
+});
+
+test("throws ForbiddenError if forbidden", async (ctx) => {
 	const client = createClient(ctx);
 
 	ctx.server.use(

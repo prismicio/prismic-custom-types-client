@@ -58,6 +58,11 @@ export interface ForbiddenErrorAPIResponse {
  * Represents an error when making an unauthorized Prismic Custom Types API
  * request.
  */
+export class UnauthorizedError extends PrismicError<string> {}
+
+/**
+ * Represents an error when making a forbidden Prismic Custom Types API request.
+ */
 export class ForbiddenError extends PrismicError<ForbiddenErrorAPIResponse> {}
 
 /**
