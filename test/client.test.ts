@@ -159,7 +159,7 @@ test("throws UnauthorizedError if unauthorized", async (ctx) => {
 		msw.rest.get(
 			new URL("./customtypes", client.endpoint).toString(),
 			(_req, res, ctx) => {
-				// We force the API to return a 403 status code to simulate an
+				// We force the API to return a 401 status code to simulate an
 				// unauthorized request.
 				return res(ctx.status(401), ctx.text("[MOCK UNAUTHORIZED ERROR]"));
 			},
