@@ -7,6 +7,7 @@ import {
 	ConflictError,
 	NotFoundError,
 	ForbiddenError,
+	UnauthorizedError,
 	InvalidPayloadError,
 } from "./errors";
 
@@ -457,6 +458,14 @@ export class CustomTypesClient {
 				const text = await res.text();
 
 				throw new InvalidPayloadError(text, { url, response: text });
+			}
+
+			// Unauthorized
+			// - User does not have access to requested repository
+			case 401: {
+				const text = await res.text();
+
+				throw new UnauthorizedError(text, { url, response: text });
 			}
 
 			// Forbidden
