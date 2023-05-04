@@ -6,6 +6,7 @@ import { createClientConfig } from "./__testutils__/createClientConfig";
 import { createClient } from "./__testutils__/createClient";
 
 import * as prismicCustomTypes from "../src";
+import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
 
 test("createCustomTypesClient creates a CustomTypesClient", (ctx) => {
 	const config = createClientConfig(ctx);
@@ -210,4 +211,88 @@ test("throws PrismicError if an unsupported response is returned", async (ctx) =
 	await expect(async () => {
 		await client.getAllCustomTypes();
 	}).rejects.toThrow(prismicCustomTypes.PrismicError);
+});
+
+test("uses user agent if defined in the config", async (ctx) => {
+	const config = createClientConfig(ctx);
+	const userAgent = "custom-user-agent";
+	config.userAgent = userAgent;
+
+	const client = prismicCustomTypes.createClient(config);
+	const queryResponse = [ctx.mock.model.customType()];
+
+	ctx.server.use(
+		msw.rest.get(
+			new URL("./customtypes", client.endpoint).toString(),
+			(req, res, ctx) => {
+				if (!isAuthorizedRequest(client, req)) {
+					return res(
+						ctx.status(403),
+						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
+					);
+				}
+
+				expect(req.headers.get("User-Agent")).toEqual(userAgent);
+
+				return res(ctx.json(queryResponse));
+			},
+		),
+	);
+
+	await client.getAllCustomTypes();
+});
+
+test("uses user agent if defined in the params", async (ctx) => {
+	const config = createClientConfig(ctx);
+	const userAgent = "custom-user-agent";
+
+	const client = prismicCustomTypes.createClient(config);
+	const queryResponse = [ctx.mock.model.customType()];
+
+	ctx.server.use(
+		msw.rest.get(
+			new URL("./customtypes", client.endpoint).toString(),
+			(req, res, ctx) => {
+				if (!isAuthorizedRequest(client, req)) {
+					return res(
+						ctx.status(403),
+						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
+					);
+				}
+
+				expect(req.headers.get("User-Agent")).toEqual(userAgent);
+
+				return res(ctx.json(queryResponse));
+			},
+		),
+	);
+
+	await client.getAllCustomTypes({ userAgent });
+});
+
+test("doesn't use a custom user agent if not defined", async (ctx) => {
+	const config = createClientConfig(ctx);
+
+	const client = prismicCustomTypes.createClient(config);
+	const queryResponse = [ctx.mock.model.customType()];
+
+	ctx.server.use(
+		msw.rest.get(
+			new URL("./customtypes", client.endpoint).toString(),
+			(req, res, ctx) => {
+				if (!isAuthorizedRequest(client, req)) {
+					return res(
+						ctx.status(403),
+						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
+					);
+				}
+
+				expect(req.headers.get("User-Agent")).toEqual("node-fetch");
+
+				return res(ctx.json(queryResponse));
+			},
+		),
+	);
+
+	await client.getAllCustomTypes();
 });

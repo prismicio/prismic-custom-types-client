@@ -43,6 +43,12 @@ export type CustomTypesClientConfig = {
 	 * Node.js, this function must be provided.
 	 */
 	fetch?: FetchLike;
+
+	/**
+	 * The "User-Agent" header used in all outgoing requests to the Custom Type
+	 * API. It's used by the Custom Type API for tracking purposes.
+	 */
+	userAgent?: string;
 };
 
 /**
@@ -50,7 +56,10 @@ export type CustomTypesClientConfig = {
  * override the client's default values, if present.
  */
 export type CustomTypesClientMethodParams = Partial<
-	Pick<CustomTypesClientConfig, "repositoryName" | "endpoint" | "token">
+	Pick<
+		CustomTypesClientConfig,
+		"repositoryName" | "endpoint" | "token" | "userAgent"
+	>
 >;
 
 /**
@@ -122,12 +131,19 @@ export class CustomTypesClient {
 	fetchFn: FetchLike;
 
 	/**
+	 * The "User-Agent" header used in all outgoing requests to the Custom Type
+	 * API. It's used by the Custom Type API for tracking purposes.
+	 */
+	userAgent?: string;
+
+	/**
 	 * Create a client for the Prismic Custom Types API.
 	 */
 	constructor(config: CustomTypesClientConfig) {
 		this.repositoryName = config.repositoryName;
 		this.endpoint = config.endpoint || DEFAULT_CUSTOM_TYPES_API_ENDPOINT;
 		this.token = config.token;
+		this.userAgent = config.userAgent;
 
 		// TODO: Remove the following `if` statement in v2.
 		//
@@ -417,12 +433,14 @@ export class CustomTypesClient {
 			path,
 			endpoint.endsWith("/") ? endpoint : `${endpoint}/`,
 		).toString();
+		const userAgent = params.userAgent || this.userAgent;
 
 		const res = await this.fetchFn(url, {
 			headers: {
 				"Content-Type": "application/json",
 				repository: params.repositoryName || this.repositoryName,
 				Authorization: `Bearer ${params.token || this.token}`,
+				...(userAgent && { "User-Agent": userAgent }),
 			},
 			signal: params.signal,
 			...requestInit,

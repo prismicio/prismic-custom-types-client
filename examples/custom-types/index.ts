@@ -11,10 +11,16 @@ const PRISMIC_REPOSITORY_NAME = "qwerty";
  */
 const PRISMIC_CUSTOM_TYPES_API_TOKEN = "secret-token";
 
+/**
+ * The "User-Agent" header to use.
+ */
+const userAgent = "custom-user-agent";
+
 const main = async () => {
 	const customTypesClient = prismicCustomTypes.createClient({
 		repositoryName: PRISMIC_REPOSITORY_NAME,
 		token: PRISMIC_CUSTOM_TYPES_API_TOKEN,
+		userAgent,
 		fetch,
 	});
 
