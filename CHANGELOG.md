@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0-alpha.0](https://github.com/prismicio/prismic-custom-types-client/compare/v1.1.0...v1.2.0-alpha.0) (2023-05-04)
+
+
+### Features
+
+* Add the possibility to set a User-Agent header ([f93bffc](https://github.com/prismicio/prismic-custom-types-client/commit/f93bffca37fdf154a0d5629297ae2bd0d30957a8))
+
 ## [1.1.0](https://github.com/prismicio/prismic-custom-types-client/compare/v1.1.0-alpha.1...v1.1.0) (2023-03-28)
 
 
