@@ -38,6 +38,7 @@ test("uses params if provided", async (ctx) => {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
+		userAgent: "custom-user-agent",
 	};
 
 	ctx.server.use(
