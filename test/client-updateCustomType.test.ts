@@ -1,9 +1,11 @@
 import { test, expect } from "vitest";
 import * as msw from "msw";
 import * as assert from "assert";
+import * as prismicT from "@prismicio/types";
 
 import { createClient } from "./__testutils__/createClient";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
+import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
 import * as prismicCustomTypes from "../src";
 
@@ -133,4 +135,11 @@ test.skip("is abortable", async (ctx) => {
 	await expect(async () => {
 		await client.updateCustomType(customType, { signal: controller.signal });
 	}).rejects.toThrow(/aborted/i);
+});
+
+testFetchOptions("supports fetch options", {
+	mockURL: (client) => new URL("./customtypes/update", client.endpoint),
+	mockURLMethod: "post",
+	run: (client, params) =>
+		client.updateCustomType({} as prismicT.CustomTypeModel, params),
 });

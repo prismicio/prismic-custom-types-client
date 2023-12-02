@@ -3,6 +3,7 @@ import * as msw from "msw";
 
 import { createClient } from "./__testutils__/createClient";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
+import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
 import * as prismicCustomTypes from "../src";
 
@@ -70,6 +71,12 @@ test("is abortable", async (ctx) => {
 	await expect(async () => {
 		await client.removeCustomType("id", { signal: controller.signal });
 	}).rejects.toThrow(/aborted/i);
+});
+
+testFetchOptions("supports fetch options", {
+	mockURL: (client) => new URL("./customtypes/id", client.endpoint),
+	mockURLMethod: "delete",
+	run: (client, params) => client.removeCustomType("id", params),
 });
 
 // NOTE: The API does not return a 4xx status code if a non-existing Custom Type

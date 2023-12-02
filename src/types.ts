@@ -22,15 +22,35 @@ export type FetchLike = (
 export type AbortSignalLike = any;
 
 /**
- * The minimum required properties from RequestInit.
+ * A subset of RequestInit properties to configure a `fetch()` request.
  */
-export interface RequestInitLike {
+// Only options relevant to the client are included. Extending from the full
+// RequestInit would cause issues, such as accepting Header objects.
+//
+// An interface is used to allow other libraries to augment the type with
+// environment-specific types.
+export interface RequestInitLike extends Pick<RequestInit, "cache"> {
 	// Explicit method names are given for compatibility with `fetch-h2`.
 	// Most fetch implementation use `method?: string`, which is compatible
 	// with the version defiend here.
 	method?: "GET" | "POST" | "DELETE";
+
 	body?: string;
+
+	/**
+	 * An object literal to set the `fetch()` request's headers.
+	 */
 	headers?: Record<string, string>;
+
+	/**
+	 * An AbortSignal to set the `fetch()` request's signal.
+	 *
+	 * See:
+	 * [https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)
+	 */
+	// NOTE: `AbortSignalLike` is `any`! It is left as `AbortSignalLike`
+	// for backwards compatibility (the type is exported) and to signal to
+	// other readers that this should be an AbortSignal-like object.
 	signal?: AbortSignalLike;
 }
 
