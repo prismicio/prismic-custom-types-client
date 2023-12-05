@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/prismicio/prismic-custom-types-client/compare/v1.1.0...v1.2.0) (2023-12-05)
+
+
+### Features
+
+* pass arbitrary options to `fetch()` with the `fetchOptions` parameter ([#9](https://github.com/prismicio/prismic-custom-types-client/issues/9)) ([ae76fe8](https://github.com/prismicio/prismic-custom-types-client/commit/ae76fe8e6fcd84f2e79745e57f687625325d0a94))
+
 ## [1.1.0](https://github.com/prismicio/prismic-custom-types-client/compare/v1.1.0-alpha.1...v1.1.0) (2023-03-28)
 
 
