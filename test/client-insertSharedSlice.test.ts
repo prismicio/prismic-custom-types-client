@@ -1,9 +1,11 @@
 import { test, expect } from "vitest";
 import * as msw from "msw";
 import * as assert from "assert";
+import * as prismicT from "@prismicio/types";
 
 import { createClient } from "./__testutils__/createClient";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
+import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
 import * as prismicCustomTypes from "../src";
 
@@ -135,4 +137,11 @@ test.skip("is abortable", async (ctx) => {
 	await expect(async () => {
 		await client.insertSharedSlice(sharedSlice, { signal: controller.signal });
 	}).rejects.toThrow(/aborted/i);
+});
+
+testFetchOptions("supports fetch options", {
+	mockURL: (client) => new URL("./slices/insert", client.endpoint),
+	mockURLMethod: "post",
+	run: (client, params) =>
+		client.insertSharedSlice({} as prismicT.SharedSliceModel, params),
 });

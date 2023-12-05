@@ -15,13 +15,20 @@ test("createCustomTypesClient creates a CustomTypesClient", (ctx) => {
 });
 
 test("has correct default state", (ctx) => {
-	const config = createClientConfig(ctx);
+	const config = createClientConfig(ctx, {
+		fetchOptions: {
+			headers: {
+				foo: "bar",
+			},
+		},
+	});
 	const client = prismicCustomTypes.createClient(config);
 
 	expect(client.repositoryName).toBe(config.repositoryName);
 	expect(client.endpoint).toBe(config.endpoint);
 	expect(client.token).toBe(config.token);
 	expect(client.fetchFn).toBe(config.fetch);
+	expect(client.fetchOptions).toStrictEqual(config.fetchOptions);
 });
 
 test("uses the default endpoint if none is provided", (ctx) => {

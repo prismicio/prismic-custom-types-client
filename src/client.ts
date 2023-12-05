@@ -43,6 +43,13 @@ export type CustomTypesClientConfig = {
 	 * Node.js, this function must be provided.
 	 */
 	fetch?: FetchLike;
+
+	/**
+	 * Options provided to the client's `fetch()` on all network requests. These
+	 * options will be merged with internally required options. They can also be
+	 * overriden on a per-query basis using the query's `fetchOptions` parameter.
+	 */
+	fetchOptions?: RequestInitLike;
 };
 
 /**
@@ -54,10 +61,16 @@ export type CustomTypesClientMethodParams = Partial<
 >;
 
 /**
- * Parameters for any client method that use `fetch()`. Only a subset of
- * `fetch()` parameters are exposed.
+ * Parameters for client methods that use `fetch()`.
  */
 type FetchParams = {
+	/**
+	 * Options provided to the client's `fetch()` on all network requests. These
+	 * options will be merged with internally required options. They can also be
+	 * overriden on a per-query basis using the query's `fetchOptions` parameter.
+	 */
+	fetchOptions?: RequestInitLike;
+
 	/**
 	 * An `AbortSignal` provided by an `AbortController`. This allows the network
 	 * request to be cancelled if necessary.
@@ -122,12 +135,20 @@ export class CustomTypesClient {
 	fetchFn: FetchLike;
 
 	/**
+	 * Options provided to the client's `fetch()` on all network requests. These
+	 * options will be merged with internally required options. They can also be
+	 * overriden on a per-query basis using the query's `fetchOptions` parameter.
+	 */
+	fetchOptions?: RequestInitLike;
+
+	/**
 	 * Create a client for the Prismic Custom Types API.
 	 */
 	constructor(config: CustomTypesClientConfig) {
 		this.repositoryName = config.repositoryName;
 		this.endpoint = config.endpoint || DEFAULT_CUSTOM_TYPES_API_ENDPOINT;
 		this.token = config.token;
+		this.fetchOptions = config.fetchOptions;
 
 		// TODO: Remove the following `if` statement in v2.
 		//
@@ -419,13 +440,22 @@ export class CustomTypesClient {
 		).toString();
 
 		const res = await this.fetchFn(url, {
+			...this.fetchOptions,
+			...requestInit,
+			...params.fetchOptions,
 			headers: {
 				"Content-Type": "application/json",
 				repository: params.repositoryName || this.repositoryName,
 				Authorization: `Bearer ${params.token || this.token}`,
+				...this.fetchOptions?.headers,
+				...requestInit.headers,
+				...params.fetchOptions?.headers,
 			},
-			signal: params.signal,
-			...requestInit,
+			signal:
+				params.fetchOptions?.signal ||
+				params.signal ||
+				requestInit.signal ||
+				this.fetchOptions?.signal,
 		});
 
 		switch (res.status) {
