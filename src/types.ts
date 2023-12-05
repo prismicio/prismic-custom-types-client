@@ -29,7 +29,7 @@ export type AbortSignalLike = any;
 //
 // An interface is used to allow other libraries to augment the type with
 // environment-specific types.
-export interface RequestInitLike extends Pick<RequestInit, "cache"> {
+export interface RequestInitLike extends Partial<Pick<RequestInit, "cache">> {
 	// Explicit method names are given for compatibility with `fetch-h2`.
 	// Most fetch implementation use `method?: string`, which is compatible
 	// with the version defiend here.
