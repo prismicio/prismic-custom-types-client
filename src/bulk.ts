@@ -49,6 +49,11 @@ export type BulkOperation =
 			payload: Pick<prismicT.SharedSliceModel, "id">;
 	  };
 
+type Models = {
+	customTypes?: prismicT.CustomTypeModel[];
+	slices?: prismicT.SharedSliceModel[];
+};
+
 /**
  * Create a bulk transaction instance to pass to a Custom Types Client `bulk()`
  * method.
@@ -58,6 +63,23 @@ export const createBulkTransation = (
 ): BulkTransaction => new BulkTransaction(...args);
 
 export class BulkTransaction {
+	static fromDiff(before: Models, after: Models): BulkTransaction {
+		const bulkTransaction = new BulkTransaction();
+
+		processDiff(before.customTypes, after.customTypes, {
+			onInsert: (model) => bulkTransaction.insertCustomType(model),
+			onUpdate: (model) => bulkTransaction.updateCustomType(model),
+			onDelete: (model) => bulkTransaction.deleteCustomType(model),
+		});
+		processDiff(before.slices, after.slices, {
+			onInsert: (model) => bulkTransaction.insertSlice(model),
+			onUpdate: (model) => bulkTransaction.updateSlice(model),
+			onDelete: (model) => bulkTransaction.deleteSlice(model),
+		});
+
+		return bulkTransaction;
+	}
+
 	operations: BulkOperation[];
 
 	constructor(initialOperations: BulkTransaction | BulkOperation[] = []) {
@@ -115,3 +137,33 @@ export class BulkTransaction {
 		});
 	}
 }
+
+const processDiff = <
+	TModel extends prismicT.CustomTypeModel | prismicT.SharedSliceModel,
+>(
+	before: TModel[] = [],
+	after: TModel[] = [],
+	args: {
+		onInsert?: (model: TModel) => void;
+		onUpdate?: (model: TModel) => void;
+		onDelete?: (model: TModel) => void;
+	},
+): void => {
+	for (const afterModel of after) {
+		const beforeModel = before.find((model) => model.id === afterModel.id);
+
+		if (beforeModel) {
+			if (JSON.stringify(beforeModel) !== JSON.stringify(afterModel)) {
+				args.onUpdate?.(afterModel);
+			}
+		} else {
+			args.onInsert?.(afterModel);
+		}
+
+		before = before.filter((model) => model.id !== afterModel.id);
+	}
+
+	for (const beforeModel of before) {
+		args.onDelete?.(beforeModel);
+	}
+};
