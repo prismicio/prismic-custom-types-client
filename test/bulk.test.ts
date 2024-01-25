@@ -1,15 +1,17 @@
-import { test, expect } from "vitest";
+import { it, expect, describe } from "vitest";
 
-import * as prismicCustomTypes from "../src";
+import { createBulkTransation, BulkTransaction } from "../src";
 
-test("createCustomTypesClient creates a CustomTypesClient", () => {
-	const bulkTransaction = prismicCustomTypes.createBulkTransation();
+describe("createCustomTypesClient", () => {
+	it("creates a CustomTypesClient", () => {
+		const bulkTransaction = createBulkTransation();
 
-	expect(bulkTransaction).toBeInstanceOf(prismicCustomTypes.BulkTransaction);
+		expect(bulkTransaction).toBeInstanceOf(BulkTransaction);
+	});
 });
 
-test("supports custom type operations", (ctx) => {
-	const bulkTransaction = prismicCustomTypes.createBulkTransation();
+it("supports custom type operations", (ctx) => {
+	const bulkTransaction = createBulkTransation();
 
 	const insertedCustomType = ctx.mock.model.customType();
 	const updatedCustomType = ctx.mock.model.customType();
@@ -38,8 +40,8 @@ test("supports custom type operations", (ctx) => {
 	]);
 });
 
-test("supports slice operations", (ctx) => {
-	const bulkTransaction = prismicCustomTypes.createBulkTransation();
+it("supports slice operations", (ctx) => {
+	const bulkTransaction = createBulkTransation();
 
 	const insertedSlice = ctx.mock.model.sharedSlice();
 	const updatedSlice = ctx.mock.model.sharedSlice();
@@ -68,17 +70,15 @@ test("supports slice operations", (ctx) => {
 	]);
 });
 
-test("supports initial operations", (ctx) => {
+it("supports initial operations", (ctx) => {
 	const insertedCustomType = ctx.mock.model.customType();
 	const updatedCustomType = ctx.mock.model.customType();
 	const deletedCustomType = ctx.mock.model.customType();
 
-	const bulkTransaction1 = prismicCustomTypes.createBulkTransation();
+	const bulkTransaction1 = createBulkTransation();
 	bulkTransaction1.insertCustomType(insertedCustomType);
 
-	const bulkTransaction2 = prismicCustomTypes.createBulkTransation(
-		bulkTransaction1.operations,
-	);
+	const bulkTransaction2 = createBulkTransation(bulkTransaction1.operations);
 	bulkTransaction2.updateCustomType(updatedCustomType);
 	bulkTransaction2.deleteCustomType(deletedCustomType);
 
@@ -101,16 +101,15 @@ test("supports initial operations", (ctx) => {
 	]);
 });
 
-test("supports initial BulkTransaction", (ctx) => {
+it("supports initial BulkTransaction", (ctx) => {
 	const insertedCustomType = ctx.mock.model.customType();
 	const updatedCustomType = ctx.mock.model.customType();
 	const deletedCustomType = ctx.mock.model.customType();
 
-	const bulkTransaction1 = prismicCustomTypes.createBulkTransation();
+	const bulkTransaction1 = createBulkTransation();
 	bulkTransaction1.insertCustomType(insertedCustomType);
 
-	const bulkTransaction2 =
-		prismicCustomTypes.createBulkTransation(bulkTransaction1);
+	const bulkTransaction2 = createBulkTransation(bulkTransaction1);
 	bulkTransaction2.updateCustomType(updatedCustomType);
 	bulkTransaction2.deleteCustomType(deletedCustomType);
 

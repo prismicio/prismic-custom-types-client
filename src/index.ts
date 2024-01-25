@@ -6,10 +6,11 @@ export type {
 
 export {
 	createBulkTransation,
+	createBulkTransationFromDiff,
 	BulkTransaction,
 	BulkOperationType,
 } from "./bulk";
-export type { BulkOperation } from "./bulk";
+export type { BulkOperation, BulkTransactionModels } from "./bulk";
 
 export {
 	PrismicError,

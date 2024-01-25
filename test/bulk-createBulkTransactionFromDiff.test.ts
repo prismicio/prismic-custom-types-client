@@ -1,8 +1,8 @@
 import { it, expect, describe } from "vitest";
 
-import * as prismicCustomTypes from "../src";
+import { createBulkTransationFromDiff } from "../src";
 
-it("supports multiple operations", (ctx) => {
+it("creates a BulkTransaction using the difference between two sets of models", (ctx) => {
 	const before = {
 		customTypes: [
 			ctx.mock.model.customType(),
@@ -28,7 +28,7 @@ it("supports multiple operations", (ctx) => {
 		],
 	};
 
-	const res = prismicCustomTypes.BulkTransaction.fromDiff(before, after);
+	const res = createBulkTransationFromDiff(before, after);
 
 	expect(res.operations).toStrictEqual([
 		{
@@ -68,7 +68,7 @@ describe("custom type", () => {
 	it("detects creation", (ctx) => {
 		const after = ctx.mock.model.customType({ label: "after" });
 
-		const res = prismicCustomTypes.BulkTransaction.fromDiff(
+		const res = createBulkTransationFromDiff(
 			{ customTypes: [] },
 			{ customTypes: [after] },
 		);
@@ -86,7 +86,7 @@ describe("custom type", () => {
 		const before = ctx.mock.model.customType({ label: "before" });
 		const after = { ...before, label: "after" };
 
-		const res = prismicCustomTypes.BulkTransaction.fromDiff(
+		const res = createBulkTransationFromDiff(
 			{ customTypes: [before] },
 			{ customTypes: [after] },
 		);
@@ -103,7 +103,7 @@ describe("custom type", () => {
 	it("detects deletion", (ctx) => {
 		const before = ctx.mock.model.customType({ label: "before" });
 
-		const res = prismicCustomTypes.BulkTransaction.fromDiff(
+		const res = createBulkTransationFromDiff(
 			{ customTypes: [before] },
 			{ customTypes: [] },
 		);
@@ -122,7 +122,7 @@ describe("slice", () => {
 	it("detects creation", (ctx) => {
 		const after = ctx.mock.model.sharedSlice({ name: "after" });
 
-		const res = prismicCustomTypes.BulkTransaction.fromDiff(
+		const res = createBulkTransationFromDiff(
 			{ slices: [] },
 			{ slices: [after] },
 		);
@@ -140,7 +140,7 @@ describe("slice", () => {
 		const before = ctx.mock.model.sharedSlice({ name: "before" });
 		const after = { ...before, name: "after" };
 
-		const res = prismicCustomTypes.BulkTransaction.fromDiff(
+		const res = createBulkTransationFromDiff(
 			{ slices: [before] },
 			{ slices: [after] },
 		);
@@ -157,7 +157,7 @@ describe("slice", () => {
 	it("detects deletion", (ctx) => {
 		const before = ctx.mock.model.sharedSlice({ name: "before" });
 
-		const res = prismicCustomTypes.BulkTransaction.fromDiff(
+		const res = createBulkTransationFromDiff(
 			{ slices: [before] },
 			{ slices: [] },
 		);
