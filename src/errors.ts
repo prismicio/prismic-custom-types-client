@@ -55,6 +55,20 @@ export interface ForbiddenErrorAPIResponse {
 }
 
 /**
+ * The response returned by the Prismic Custom Types API bulk transaction
+ * endpoint when a soft or hard limit is reached.
+ */
+type BulkTransactionAPIResponse = {
+	details: {
+		customTypes: {
+			id: string;
+			numberOfDocuments: number;
+			url: string;
+		}[];
+	};
+};
+
+/**
  * Represents an error when making an unauthorized Prismic Custom Types API
  * request.
  */
@@ -79,6 +93,18 @@ export class NotFoundError extends PrismicError {}
  * Represents an error when the provided data is invalid.
  */
 export class InvalidPayloadError extends PrismicError<string> {}
+
+/**
+ * Represents an error when a bulk transaction requires confirmation to delete
+ * documents.
+ */
+export class BulkTransactionConfirmationError extends PrismicError<BulkTransactionAPIResponse> {}
+
+/**
+ * Represents an error when a bulk transaction reached the limit of operations
+ * allowed by the API.
+ */
+export class BulkTransactionLimitError extends PrismicError<BulkTransactionAPIResponse> {}
 
 /**
  * Represents an error when a valid `fetch` function is not available to the

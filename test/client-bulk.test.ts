@@ -1,4 +1,4 @@
-import { test, expect } from "vitest";
+import { it, expect } from "vitest";
 import * as msw from "msw";
 import * as assert from "assert";
 
@@ -8,7 +8,7 @@ import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
 import * as prismicCustomTypes from "../src";
 
-test("performs a bulk transaction", async (ctx) => {
+it("performs a bulk transaction", async (ctx) => {
 	const insertedCustomType = ctx.mock.model.customType();
 	const updatedCustomType = ctx.mock.model.customType();
 	const deletedCustomType = ctx.mock.model.customType();
@@ -63,9 +63,12 @@ test("performs a bulk transaction", async (ctx) => {
 					);
 				}
 
-				assert.deepStrictEqual(await req.json(), operations);
+				assert.deepStrictEqual(await req.json(), {
+					confirmDeleteDocuments: false,
+					changes: operations,
+				});
 
-				return res(ctx.status(201));
+				return res(ctx.status(204));
 			},
 		),
 	);
@@ -75,7 +78,7 @@ test("performs a bulk transaction", async (ctx) => {
 	expect(res).toStrictEqual(operations);
 });
 
-test("supports BulkTransation instance", async (ctx) => {
+it("supports BulkTransation instance", async (ctx) => {
 	const bulkTransaction = prismicCustomTypes.createBulkTransation();
 
 	const insertedCustomType = ctx.mock.model.customType();
@@ -107,9 +110,12 @@ test("supports BulkTransation instance", async (ctx) => {
 					);
 				}
 
-				assert.deepStrictEqual(await req.json(), bulkTransaction.operations);
+				assert.deepStrictEqual(await req.json(), {
+					confirmDeleteDocuments: false,
+					changes: bulkTransaction.operations,
+				});
 
-				return res(ctx.status(201));
+				return res(ctx.status(204));
 			},
 		),
 	);
@@ -119,9 +125,97 @@ test("supports BulkTransation instance", async (ctx) => {
 	expect(res).toStrictEqual(bulkTransaction.operations);
 });
 
-// TODO: This test fails for unknown reasons. The POST fetch request seems to
+it("does not delete documents by default", async (ctx) => {
+	const client = createClient(ctx);
+
+	ctx.server.use(
+		msw.rest.post(
+			new URL("./bulk", client.endpoint).toString(),
+			async (req, res, ctx) => {
+				const body = await req.json();
+
+				assert.equal(body.confirmDeleteDocuments, false);
+
+				return res(ctx.status(204));
+			},
+		),
+	);
+
+	await expect(client.bulk([])).resolves.not.toThrow();
+});
+
+it("allows confirming document deletion", async (ctx) => {
+	const client = createClient(ctx);
+
+	ctx.server.use(
+		msw.rest.post(
+			new URL("./bulk", client.endpoint).toString(),
+			async (req, res, ctx) => {
+				const body = await req.json();
+
+				assert.equal(body.confirmDeleteDocuments, true);
+
+				return res(ctx.status(204));
+			},
+		),
+	);
+
+	await expect(
+		client.bulk([], { deleteDocuments: true }),
+	).resolves.not.toThrow();
+});
+
+it("throws BulkTransactionConfirmationError if confirmation is needed", async (ctx) => {
+	const client = createClient(ctx);
+
+	ctx.server.use(
+		msw.rest.post(
+			new URL("./bulk", client.endpoint).toString(),
+			async (_req, res, ctx) => {
+				return res(
+					ctx.json({
+						details: {
+							customTypes: [],
+						},
+					}),
+					ctx.status(202),
+				);
+			},
+		),
+	);
+
+	await expect(async () => {
+		await client.bulk([]);
+	}).rejects.toThrow(prismicCustomTypes.BulkTransactionConfirmationError);
+});
+
+it("throws BulkTransactionLimitError if the command limit is reached", async (ctx) => {
+	const client = createClient(ctx);
+
+	ctx.server.use(
+		msw.rest.post(
+			new URL("./bulk", client.endpoint).toString(),
+			async (_req, res, ctx) => {
+				return res(
+					ctx.json({
+						details: {
+							customTypes: [],
+						},
+					}),
+					ctx.status(403),
+				);
+			},
+		),
+	);
+
+	await expect(async () => {
+		await client.bulk([]);
+	}).rejects.toThrow(prismicCustomTypes.BulkTransactionLimitError);
+});
+
+// TODO: This it fails for unknown reasons. The POST fetch request seems to
 // throw outside the `async/await` instruction.
-test.skip("is abortable", async (ctx) => {
+it.skip("is abortable", async (ctx) => {
 	const bulkTransaction = prismicCustomTypes.createBulkTransation();
 	bulkTransaction.insertCustomType(ctx.mock.model.customType());
 

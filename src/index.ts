@@ -20,6 +20,8 @@ export {
 	InvalidPayloadError,
 	MissingFetchError,
 	NotFoundError,
+	BulkTransactionLimitError,
+	BulkTransactionConfirmationError,
 } from "./errors";
 
 export type { FetchLike, ResponseLike, RequestInitLike } from "./types";

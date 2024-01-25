@@ -1,13 +1,11 @@
-import { it, expect, describe } from "vitest";
+import { it, expect } from "vitest";
 
 import { createBulkTransation, BulkTransaction } from "../src";
 
-describe("createCustomTypesClient", () => {
-	it("creates a CustomTypesClient", () => {
-		const bulkTransaction = createBulkTransation();
+it("creates a BulkTransaction", () => {
+	const bulkTransaction = createBulkTransation();
 
-		expect(bulkTransaction).toBeInstanceOf(BulkTransaction);
-	});
+	expect(bulkTransaction).toBeInstanceOf(BulkTransaction);
 });
 
 it("supports custom type operations", (ctx) => {
