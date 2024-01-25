@@ -1,3 +1,5 @@
+import type * as prismicT from "@prismicio/types";
+
 /**
  * A universal API to make network requests. A subset of the `fetch()` API.
  */

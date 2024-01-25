@@ -10,6 +10,7 @@ import {
 	UnauthorizedError,
 	InvalidPayloadError,
 } from "./errors";
+import { BulkOperation, BulkTransaction } from "./bulk";
 
 /**
  * The default endpoint for the Prismic Custom Types API.
@@ -407,6 +408,33 @@ export class CustomTypesClient {
 		});
 
 		return id;
+	}
+
+	/**
+	 * Performs multiple operations in a single transaction.
+	 *
+	 * @param operations - A `BulkTransaction` containing all operations, or an
+	 *   array of objects describing an operation.
+	 * @param params - Parameters to override the client's default configuration.
+	 *
+	 * @returns An array of objects describing the operations.
+	 */
+	async bulk(
+		operations: BulkTransaction | BulkOperation[],
+		params?: CustomTypesClientMethodParams & FetchParams,
+	): Promise<BulkOperation[]> {
+		const resolvedOperations =
+			operations instanceof BulkTransaction
+				? operations.operations
+				: operations;
+
+		await this.fetch(
+			"./bulk",
+			params,
+			createPostFetchRequestInit(resolvedOperations),
+		);
+
+		return resolvedOperations;
 	}
 
 	/**
