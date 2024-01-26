@@ -1,6 +1,5 @@
 import { it, expect } from "vitest";
 import * as msw from "msw";
-import * as assert from "assert";
 
 import { createClient } from "./__testutils__/createClient";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
@@ -63,7 +62,7 @@ it("performs a bulk transaction", async (ctx) => {
 					);
 				}
 
-				assert.deepStrictEqual(await req.json(), {
+				expect(await req.json()).toStrictEqual({
 					confirmDeleteDocuments: false,
 					changes: operations,
 				});
@@ -79,7 +78,7 @@ it("performs a bulk transaction", async (ctx) => {
 });
 
 it("supports BulkTransation instance", async (ctx) => {
-	const bulkTransaction = prismicCustomTypes.createBulkTransation();
+	const bulkTransaction = prismicCustomTypes.createBulkTransaction();
 
 	const insertedCustomType = ctx.mock.model.customType();
 	const updatedCustomType = ctx.mock.model.customType();
@@ -110,7 +109,7 @@ it("supports BulkTransation instance", async (ctx) => {
 					);
 				}
 
-				assert.deepStrictEqual(await req.json(), {
+				expect(await req.json()).toStrictEqual({
 					confirmDeleteDocuments: false,
 					changes: bulkTransaction.operations,
 				});
@@ -134,7 +133,7 @@ it("does not delete documents by default", async (ctx) => {
 			async (req, res, ctx) => {
 				const body = await req.json();
 
-				assert.equal(body.confirmDeleteDocuments, false);
+				expect(body.confirmDeleteDocuments).toBe(false);
 
 				return res(ctx.status(204));
 			},
@@ -153,7 +152,7 @@ it("allows confirming document deletion", async (ctx) => {
 			async (req, res, ctx) => {
 				const body = await req.json();
 
-				assert.equal(body.confirmDeleteDocuments, true);
+				expect(body.confirmDeleteDocuments).toBe(true);
 
 				return res(ctx.status(204));
 			},
@@ -213,19 +212,17 @@ it("throws BulkTransactionLimitError if the command limit is reached", async (ct
 	}).rejects.toThrow(prismicCustomTypes.BulkTransactionLimitError);
 });
 
-// TODO: This it fails for unknown reasons. The POST fetch request seems to
-// throw outside the `async/await` instruction.
-it.skip("is abortable", async (ctx) => {
-	const bulkTransaction = prismicCustomTypes.createBulkTransation();
+it("is abortable", async (ctx) => {
+	const bulkTransaction = prismicCustomTypes.createBulkTransaction();
 	bulkTransaction.insertCustomType(ctx.mock.model.customType());
 
 	const client = createClient(ctx);
-
 	const controller = new AbortController();
-	controller.abort();
 
 	await expect(async () => {
-		await client.bulk(bulkTransaction, { signal: controller.signal });
+		const promise = client.bulk(bulkTransaction, { signal: controller.signal });
+		controller.abort();
+		await promise;
 	}).rejects.toThrow(/aborted/i);
 });
 

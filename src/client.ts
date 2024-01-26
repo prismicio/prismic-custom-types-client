@@ -426,7 +426,7 @@ export class CustomTypesClient {
 	}
 
 	/**
-	 * Performs multiple insert, upadte, and/or delete operations in a single
+	 * Performs multiple insert, update, and/or delete operations in a single
 	 * transaction.
 	 *
 	 * @example
