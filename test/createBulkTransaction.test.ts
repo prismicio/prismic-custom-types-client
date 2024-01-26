@@ -1,15 +1,15 @@
 import { it, expect } from "vitest";
 
-import { createBulkTransation, BulkTransaction } from "../src";
+import { createBulkTransaction } from "../src";
 
-it("creates a BulkTransaction", () => {
-	const bulkTransaction = createBulkTransation();
+it("starts with an empty array of operations", () => {
+	const bulkTransaction = createBulkTransaction();
 
-	expect(bulkTransaction).toBeInstanceOf(BulkTransaction);
+	expect(bulkTransaction.operations).toStrictEqual([]);
 });
 
 it("supports custom type operations", (ctx) => {
-	const bulkTransaction = createBulkTransation();
+	const bulkTransaction = createBulkTransaction();
 
 	const insertedCustomType = ctx.mock.model.customType();
 	const updatedCustomType = ctx.mock.model.customType();
@@ -39,7 +39,7 @@ it("supports custom type operations", (ctx) => {
 });
 
 it("supports slice operations", (ctx) => {
-	const bulkTransaction = createBulkTransation();
+	const bulkTransaction = createBulkTransaction();
 
 	const insertedSlice = ctx.mock.model.sharedSlice();
 	const updatedSlice = ctx.mock.model.sharedSlice();
@@ -73,10 +73,10 @@ it("supports initial operations", (ctx) => {
 	const updatedCustomType = ctx.mock.model.customType();
 	const deletedCustomType = ctx.mock.model.customType();
 
-	const bulkTransaction1 = createBulkTransation();
+	const bulkTransaction1 = createBulkTransaction();
 	bulkTransaction1.insertCustomType(insertedCustomType);
 
-	const bulkTransaction2 = createBulkTransation(bulkTransaction1.operations);
+	const bulkTransaction2 = createBulkTransaction(bulkTransaction1.operations);
 	bulkTransaction2.updateCustomType(updatedCustomType);
 	bulkTransaction2.deleteCustomType(deletedCustomType);
 
@@ -104,10 +104,10 @@ it("supports initial BulkTransaction", (ctx) => {
 	const updatedCustomType = ctx.mock.model.customType();
 	const deletedCustomType = ctx.mock.model.customType();
 
-	const bulkTransaction1 = createBulkTransation();
+	const bulkTransaction1 = createBulkTransaction();
 	bulkTransaction1.insertCustomType(insertedCustomType);
 
-	const bulkTransaction2 = createBulkTransation(bulkTransaction1);
+	const bulkTransaction2 = createBulkTransaction(bulkTransaction1);
 	bulkTransaction2.updateCustomType(updatedCustomType);
 	bulkTransaction2.deleteCustomType(deletedCustomType);
 

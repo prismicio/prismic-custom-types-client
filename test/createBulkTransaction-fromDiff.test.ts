@@ -1,8 +1,8 @@
 import { it, expect, describe } from "vitest";
 
-import { createBulkTransationFromDiff } from "../src";
+import { createBulkTransaction } from "../src";
 
-it("creates a BulkTransaction using the difference between two sets of models", (ctx) => {
+it("adds operations using the difference between two sets of models", (ctx) => {
 	const before = {
 		customTypes: [
 			ctx.mock.model.customType(),
@@ -28,9 +28,10 @@ it("creates a BulkTransaction using the difference between two sets of models", 
 		],
 	};
 
-	const res = createBulkTransationFromDiff(before, after);
+	const bulkTransaction = createBulkTransaction();
+	bulkTransaction.fromDiff(before, after);
 
-	expect(res.operations).toStrictEqual([
+	expect(bulkTransaction.operations).toStrictEqual([
 		{
 			type: "CUSTOM_TYPE_UPDATE",
 			id: after.customTypes[1].id,
@@ -68,12 +69,10 @@ describe("custom type", () => {
 	it("detects creation", (ctx) => {
 		const after = ctx.mock.model.customType({ label: "after" });
 
-		const res = createBulkTransationFromDiff(
-			{ customTypes: [] },
-			{ customTypes: [after] },
-		);
+		const bulkTransaction = createBulkTransaction();
+		bulkTransaction.fromDiff({ customTypes: [] }, { customTypes: [after] });
 
-		expect(res.operations).toStrictEqual([
+		expect(bulkTransaction.operations).toStrictEqual([
 			{
 				type: "CUSTOM_TYPE_INSERT",
 				id: after.id,
@@ -86,12 +85,13 @@ describe("custom type", () => {
 		const before = ctx.mock.model.customType({ label: "before" });
 		const after = { ...before, label: "after" };
 
-		const res = createBulkTransationFromDiff(
+		const bulkTransaction = createBulkTransaction();
+		bulkTransaction.fromDiff(
 			{ customTypes: [before] },
 			{ customTypes: [after] },
 		);
 
-		expect(res.operations).toStrictEqual([
+		expect(bulkTransaction.operations).toStrictEqual([
 			{
 				type: "CUSTOM_TYPE_UPDATE",
 				id: before.id,
@@ -103,12 +103,10 @@ describe("custom type", () => {
 	it("detects deletion", (ctx) => {
 		const before = ctx.mock.model.customType({ label: "before" });
 
-		const res = createBulkTransationFromDiff(
-			{ customTypes: [before] },
-			{ customTypes: [] },
-		);
+		const bulkTransaction = createBulkTransaction();
+		bulkTransaction.fromDiff({ customTypes: [before] }, { customTypes: [] });
 
-		expect(res.operations).toStrictEqual([
+		expect(bulkTransaction.operations).toStrictEqual([
 			{
 				type: "CUSTOM_TYPE_DELETE",
 				id: before.id,
@@ -122,12 +120,10 @@ describe("slice", () => {
 	it("detects creation", (ctx) => {
 		const after = ctx.mock.model.sharedSlice({ name: "after" });
 
-		const res = createBulkTransationFromDiff(
-			{ slices: [] },
-			{ slices: [after] },
-		);
+		const bulkTransaction = createBulkTransaction();
+		bulkTransaction.fromDiff({ slices: [] }, { slices: [after] });
 
-		expect(res.operations).toStrictEqual([
+		expect(bulkTransaction.operations).toStrictEqual([
 			{
 				type: "SLICE_INSERT",
 				id: after.id,
@@ -140,12 +136,10 @@ describe("slice", () => {
 		const before = ctx.mock.model.sharedSlice({ name: "before" });
 		const after = { ...before, name: "after" };
 
-		const res = createBulkTransationFromDiff(
-			{ slices: [before] },
-			{ slices: [after] },
-		);
+		const bulkTransaction = createBulkTransaction();
+		bulkTransaction.fromDiff({ slices: [before] }, { slices: [after] });
 
-		expect(res.operations).toStrictEqual([
+		expect(bulkTransaction.operations).toStrictEqual([
 			{
 				type: "SLICE_UPDATE",
 				id: before.id,
@@ -157,12 +151,10 @@ describe("slice", () => {
 	it("detects deletion", (ctx) => {
 		const before = ctx.mock.model.sharedSlice({ name: "before" });
 
-		const res = createBulkTransationFromDiff(
-			{ slices: [before] },
-			{ slices: [] },
-		);
+		const bulkTransaction = createBulkTransaction();
+		bulkTransaction.fromDiff({ slices: [before] }, { slices: [] });
 
-		expect(res.operations).toStrictEqual([
+		expect(bulkTransaction.operations).toStrictEqual([
 			{
 				type: "SLICE_DELETE",
 				id: before.id,

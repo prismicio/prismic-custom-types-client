@@ -5,8 +5,7 @@ export type {
 } from "./client";
 
 export {
-	createBulkTransation,
-	createBulkTransationFromDiff,
+	createBulkTransaction,
 	BulkTransaction,
 	BulkOperationType,
 } from "./bulk";

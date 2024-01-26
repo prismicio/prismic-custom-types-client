@@ -57,12 +57,12 @@ export type BulkTransactionModels = {
 const processDiff = <
 	TModel extends prismicT.CustomTypeModel | prismicT.SharedSliceModel,
 >(
-	before: TModel[] = [],
-	after: TModel[] = [],
-	args: {
-		onInsert?: (model: TModel) => void;
-		onUpdate?: (model: TModel) => void;
-		onDelete?: (model: TModel) => void;
+	before: TModel[],
+	after: TModel[],
+	callbacks: {
+		onInsert: (model: TModel) => void;
+		onUpdate: (model: TModel) => void;
+		onDelete: (model: TModel) => void;
 	},
 ): void => {
 	for (const afterModel of after) {
@@ -70,17 +70,17 @@ const processDiff = <
 
 		if (beforeModel) {
 			if (JSON.stringify(beforeModel) !== JSON.stringify(afterModel)) {
-				args.onUpdate?.(afterModel);
+				callbacks.onUpdate(afterModel);
 			}
-		} else {
-			args.onInsert?.(afterModel);
-		}
 
-		before = before.filter((model) => model.id !== afterModel.id);
+			before = before.filter((model) => model !== beforeModel);
+		} else {
+			callbacks.onInsert(afterModel);
+		}
 	}
 
 	for (const beforeModel of before) {
-		args.onDelete?.(beforeModel);
+		callbacks.onDelete(beforeModel);
 	}
 };
 
@@ -88,31 +88,7 @@ const processDiff = <
  * Create a bulk transaction instance to pass to a Custom Types Client `bulk()`
  * method.
  */
-export const createBulkTransationFromDiff = (
-	before: BulkTransactionModels,
-	after: BulkTransactionModels,
-): BulkTransaction => {
-	const bulkTransaction = createBulkTransation();
-
-	processDiff(before.customTypes, after.customTypes, {
-		onInsert: (model) => bulkTransaction.insertCustomType(model),
-		onUpdate: (model) => bulkTransaction.updateCustomType(model),
-		onDelete: (model) => bulkTransaction.deleteCustomType(model),
-	});
-	processDiff(before.slices, after.slices, {
-		onInsert: (model) => bulkTransaction.insertSlice(model),
-		onUpdate: (model) => bulkTransaction.updateSlice(model),
-		onDelete: (model) => bulkTransaction.deleteSlice(model),
-	});
-
-	return bulkTransaction;
-};
-
-/**
- * Create a bulk transaction instance to pass to a Custom Types Client `bulk()`
- * method.
- */
-export const createBulkTransation = (
+export const createBulkTransaction = (
 	...args: ConstructorParameters<typeof BulkTransaction>
 ): BulkTransaction => new BulkTransaction(...args);
 
@@ -124,6 +100,19 @@ export class BulkTransaction {
 			initialOperations instanceof BulkTransaction
 				? initialOperations.operations
 				: initialOperations;
+	}
+
+	fromDiff(before: BulkTransactionModels, after: BulkTransactionModels): void {
+		processDiff(before.customTypes ?? [], after.customTypes ?? [], {
+			onInsert: (model) => this.insertCustomType(model),
+			onUpdate: (model) => this.updateCustomType(model),
+			onDelete: (model) => this.deleteCustomType(model),
+		});
+		processDiff(before.slices ?? [], after.slices ?? [], {
+			onInsert: (model) => this.insertSlice(model),
+			onUpdate: (model) => this.updateSlice(model),
+			onDelete: (model) => this.deleteSlice(model),
+		});
 	}
 
 	insertCustomType(customType: prismicT.CustomTypeModel): void {
