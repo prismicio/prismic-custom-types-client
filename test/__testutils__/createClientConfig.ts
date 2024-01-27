@@ -11,7 +11,7 @@ export const createClientConfig = (
 ): prismicCustomTypes.CustomTypesClientConfig => {
 	const repositoryName = crypto
 		.createHash("md5")
-		.update(ctx.meta.name)
+		.update(ctx.task.name)
 		.digest("hex");
 	const token = crypto.createHash("md5").update(repositoryName).digest("hex");
 	const endpoint = `https://${repositoryName}.example.com`;

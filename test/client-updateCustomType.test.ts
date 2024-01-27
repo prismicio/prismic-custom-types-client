@@ -1,141 +1,84 @@
-import { expect, test } from "vitest";
+import { expect } from "vitest";
 
 import * as prismic from "@prismicio/client";
-import * as assert from "assert";
-import * as msw from "msw";
 
-import { createClient } from "./__testutils__/createClient";
-import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
+import { it } from "./__testutils__/it";
 import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
-import * as prismicCustomTypes from "../src";
+import {
+	CustomTypesClientMethodParams,
+	InvalidPayloadError,
+	NotFoundError,
+} from "../src";
 
-test("updates a Custom Type", async (ctx) => {
-	const customType = ctx.mock.model.customType();
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./customtypes/update", client.endpoint).toString(),
-			async (req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				assert.deepStrictEqual(await req.json(), customType);
-
-				return res(ctx.status(204));
-			},
-		),
-	);
-
+it("updates a custom type", async ({ client, api, customType }) => {
+	api.mock("./customtypes/update", undefined, {
+		method: "post",
+		statusCode: 204,
+		requiredBody: customType,
+	});
 	const res = await client.updateCustomType(customType);
-
 	expect(res).toStrictEqual(customType);
 });
 
-test("uses params if provided", async (ctx) => {
-	const customType = ctx.mock.model.customType();
-	const client = createClient(ctx);
-	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
+it("uses params if provided", async ({ client, api, customType }) => {
+	const params = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
-	};
+	} satisfies CustomTypesClientMethodParams;
 
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./customtypes/update", params.endpoint).toString(),
-			async (req, res, ctx) => {
-				if (!isAuthorizedRequest(params, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				assert.deepStrictEqual(await req.json(), customType);
-
-				return res(ctx.status(204));
-			},
-		),
-	);
-
+	api.mock(new URL("./customtypes/update", params.endpoint), undefined, {
+		method: "post",
+		statusCode: 204,
+		requiredBody: customType,
+		repositoryName: params.repositoryName,
+		token: params.token,
+	});
 	const res = await client.updateCustomType(customType, params);
-
 	expect(res).toStrictEqual(customType);
 });
 
-test("throws NotFoundError if a matching Custom Type was not found", async (ctx) => {
-	const customType = ctx.mock.model.customType();
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./customtypes/update", client.endpoint).toString(),
-			async (req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				assert.deepStrictEqual(await req.json(), customType);
-
-				return res(ctx.status(422));
-			},
-		),
-	);
-
+it("throws NotFoundError if a matching custom type was not found", async ({
+	client,
+	api,
+	customType,
+}) => {
+	api.mock("./customtypes/update", undefined, {
+		method: "post",
+		statusCode: 422,
+		requiredBody: customType,
+	});
 	await expect(async () => {
 		await client.updateCustomType(customType);
-	}).rejects.toThrow(prismicCustomTypes.NotFoundError);
+	}).rejects.toThrow(NotFoundError);
 });
 
-test("throws InvalidPayloadError if an invalid Custom Type is sent", async (ctx) => {
-	const customType = ctx.mock.model.customType();
-	const client = createClient(ctx);
-	const message = "[MOCK INVALID PAYLOAD ERROR]";
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./customtypes/update", client.endpoint).toString(),
-			async (req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				// We force the API to return a 400 status code to simulate an invalid
-				// payload error.
-				return res(ctx.status(400), ctx.text(message));
-			},
-		),
-	);
-
+it("throws InvalidPayloadError if an invalid custom type is sent", async ({
+	client,
+	api,
+	customType,
+}) => {
+	api.mock("./customtypes/update", undefined, {
+		method: "post",
+		statusCode: 400,
+		requiredBody: customType,
+	});
 	await expect(async () => {
 		await client.updateCustomType(customType);
-	}).rejects.toThrow(prismicCustomTypes.InvalidPayloadError);
+	}).rejects.toThrow(InvalidPayloadError);
 });
 
-// TODO: This test fails for unknown reasons. The POST fetch request seems to
-// throw outside the `async/await` instruction.
-test.skip("is abortable", async (ctx) => {
-	const customType = ctx.mock.model.customType();
-	const client = createClient(ctx);
+it("is abortable", async ({ client, api, customType }) => {
+	api.mock("./customtypes/update", undefined, { method: "post" });
 
 	const controller = new AbortController();
 	controller.abort();
 
-	await expect(async () => {
-		await client.updateCustomType(customType, { signal: controller.signal });
-	}).rejects.toThrow(/aborted/i);
+	const res = client.updateCustomType(customType, {
+		signal: controller.signal,
+	});
+	await expect(res).rejects.toThrow(/aborted/i);
 });
 
 testFetchOptions("supports fetch options", {

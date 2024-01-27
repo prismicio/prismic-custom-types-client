@@ -1,77 +1,39 @@
-import { expect, test } from "vitest";
+import { expect } from "vitest";
 
-import * as msw from "msw";
-
-import { createClient } from "./__testutils__/createClient";
-import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
+import { it } from "./__testutils__/it";
 import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
-import * as prismicCustomTypes from "../src";
+import { CustomTypesClientMethodParams } from "../src";
 
-test("returns all Shared Slices", async (ctx) => {
-	const queryResponse = [ctx.mock.model.sharedSlice()];
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.get(
-			new URL("./slices", client.endpoint).toString(),
-			(req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				return res(ctx.json(queryResponse));
-			},
-		),
-	);
-
+it("returns all slices", async ({ client, api, slice }) => {
+	api.mock("./slices", [slice]);
 	const res = await client.getAllSharedSlices();
-
-	expect(res).toStrictEqual(queryResponse);
+	expect(res).toStrictEqual([slice]);
 });
 
-test("uses params if provided", async (ctx) => {
-	const queryResponse = [ctx.mock.model.sharedSlice()];
-	const client = createClient(ctx);
-	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
+it.only("uses params if provided", async ({ client, api, slice }) => {
+	const params = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
-	};
+	} satisfies CustomTypesClientMethodParams;
 
-	ctx.server.use(
-		msw.rest.get(
-			new URL("./slices", params.endpoint).toString(),
-			(req, res, ctx) => {
-				if (!isAuthorizedRequest(params, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				return res(ctx.json(queryResponse));
-			},
-		),
-	);
-
+	api.mock(new URL("./slices", params.endpoint), [slice], {
+		repositoryName: params.repositoryName,
+		token: params.token,
+	});
 	const res = await client.getAllSharedSlices(params);
-
-	expect(res).toStrictEqual(queryResponse);
+	expect(res).toStrictEqual([slice]);
 });
 
-test("is abortable", async (ctx) => {
+it("is abortable", async ({ client, api }) => {
+	api.mock("./slices");
+
 	const controller = new AbortController();
 	controller.abort();
 
-	const client = createClient(ctx);
-
-	await expect(async () => {
-		await client.getAllSharedSlices({ signal: controller.signal });
-	}).rejects.toThrow(/aborted/i);
+	const res = client.getAllSharedSlices({ signal: controller.signal });
+	await expect(res).rejects.toThrow(/aborted/i);
 });
 
 testFetchOptions("supports fetch options", {

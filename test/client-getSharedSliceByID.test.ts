@@ -1,102 +1,52 @@
-import { expect, test } from "vitest";
+import { expect } from "vitest";
 
-import * as msw from "msw";
-
-import { createClient } from "./__testutils__/createClient";
-import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
+import { it } from "./__testutils__/it";
 import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
-import * as prismicCustomTypes from "../src";
+import { CustomTypesClientMethodParams, NotFoundError } from "../src";
 
-test("returns a Shared Slice by ID", async (ctx) => {
-	const sharedSlice = ctx.mock.model.sharedSlice();
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.get(
-			new URL(`./slices/${sharedSlice.id}`, client.endpoint).toString(),
-			(req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				return res(ctx.json(sharedSlice));
-			},
-		),
-	);
-
-	const res = await client.getSharedSliceByID(sharedSlice.id);
-
-	expect(res).toStrictEqual(sharedSlice);
+it("returns a slice by ID", async ({ client, api, slice }) => {
+	api.mock(`./slices/${slice.id}`, slice);
+	const res = await client.getSharedSliceByID(slice.id);
+	expect(res).toStrictEqual(slice);
 });
 
-test("uses params if provided", async (ctx) => {
-	const sharedSlice = ctx.mock.model.sharedSlice();
-	const client = createClient(ctx);
-	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
+it("uses params if provided", async ({ client, api, slice }) => {
+	const params = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
-	};
+	} satisfies CustomTypesClientMethodParams;
 
-	ctx.server.use(
-		msw.rest.get(
-			new URL(`./slices/${sharedSlice.id}`, params.endpoint).toString(),
-			(req, res, ctx) => {
-				if (!isAuthorizedRequest(params, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				return res(ctx.json(sharedSlice));
-			},
-		),
-	);
-
-	const res = await client.getSharedSliceByID(sharedSlice.id, params);
-
-	expect(res).toStrictEqual(sharedSlice);
+	api.mock(new URL(`./slices/${slice.id}`, params.endpoint), slice, {
+		repositoryName: params.repositoryName,
+		token: params.token,
+	});
+	const res = await client.getSharedSliceByID(slice.id, params);
+	expect(res).toStrictEqual(slice);
 });
 
-test("throws NotFoundError if a matching Custom Type was not found", async (ctx) => {
-	const sharedSlice = ctx.mock.model.sharedSlice();
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.get(
-			new URL(`./slices/${sharedSlice.id}`, client.endpoint).toString(),
-			(req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				return res(ctx.status(404));
-			},
-		),
-	);
-
+it("throws NotFoundError if a matching slice was not found", async ({
+	client,
+	api,
+	slice,
+}) => {
+	api.mock(`./slices/${slice.id}`, undefined, { statusCode: 404 });
 	await expect(async () => {
-		await client.getSharedSliceByID(sharedSlice.id);
-	}).rejects.toThrow(prismicCustomTypes.NotFoundError);
+		await client.getSharedSliceByID(slice.id);
+	}).rejects.toThrow(NotFoundError);
 });
 
-test("is abortable", async (ctx) => {
+it("is abortable", async ({ client, api, slice }) => {
+	api.mock(`./slices/${slice.id}`);
+
 	const controller = new AbortController();
 	controller.abort();
 
-	const client = createClient(ctx);
-
-	await expect(async () => {
-		await client.getSharedSliceByID("id", { signal: controller.signal });
-	}).rejects.toThrow(/aborted/i);
+	const res = client.getSharedSliceByID(slice.id, {
+		signal: controller.signal,
+	});
+	await expect(res).rejects.toThrow(/aborted/i);
 });
 
 testFetchOptions("supports fetch options", {

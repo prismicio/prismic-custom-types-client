@@ -1,21 +1,18 @@
-import { expect, it } from "vitest";
+import { expect } from "vitest";
 
-import * as msw from "msw";
-
-import { createClient } from "./__testutils__/createClient";
-import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
+import { it } from "./__testutils__/it";
 import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
 import * as prismicCustomTypes from "../src";
 
-it("performs a bulk transaction", async (ctx) => {
-	const insertedCustomType = ctx.mock.model.customType();
-	const updatedCustomType = ctx.mock.model.customType();
-	const deletedCustomType = ctx.mock.model.customType();
+it("performs a bulk transaction", async ({ client, mock, api }) => {
+	const insertedCustomType = mock.model.customType();
+	const updatedCustomType = mock.model.customType();
+	const deletedCustomType = mock.model.customType();
 
-	const insertedSlice = ctx.mock.model.sharedSlice();
-	const updatedSlice = ctx.mock.model.sharedSlice();
-	const deletedSlice = ctx.mock.model.sharedSlice();
+	const insertedSlice = mock.model.sharedSlice();
+	const updatedSlice = mock.model.sharedSlice();
+	const deletedSlice = mock.model.sharedSlice();
 
 	const operations = [
 		{
@@ -50,138 +47,89 @@ it("performs a bulk transaction", async (ctx) => {
 		},
 	];
 
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./bulk", client.endpoint).toString(),
-			async (req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				expect(await req.json()).toStrictEqual({
-					confirmDeleteDocuments: false,
-					changes: operations,
-				});
-
-				return res(ctx.status(204));
-			},
-		),
-	);
+	api.mock("./bulk", undefined, {
+		method: "post",
+		statusCode: 204,
+		requiredBody: {
+			confirmDeleteDocuments: false,
+			changes: operations,
+		},
+	});
 
 	const res = await client.bulk(operations);
 
 	expect(res).toStrictEqual(operations);
 });
 
-it("supports BulkTransation instance", async (ctx) => {
+it("supports BulkTransation instance", async ({ client, mock, api }) => {
 	const bulkTransaction = prismicCustomTypes.createBulkTransaction();
 
-	const insertedCustomType = ctx.mock.model.customType();
-	const updatedCustomType = ctx.mock.model.customType();
-	const deletedCustomType = ctx.mock.model.customType();
+	const insertedCustomType = mock.model.customType();
+	const updatedCustomType = mock.model.customType();
+	const deletedCustomType = mock.model.customType();
 
 	bulkTransaction.insertCustomType(insertedCustomType);
 	bulkTransaction.updateCustomType(updatedCustomType);
 	bulkTransaction.deleteCustomType(deletedCustomType);
 
-	const insertedSlice = ctx.mock.model.sharedSlice();
-	const updatedSlice = ctx.mock.model.sharedSlice();
-	const deletedSlice = ctx.mock.model.sharedSlice();
+	const insertedSlice = mock.model.sharedSlice();
+	const updatedSlice = mock.model.sharedSlice();
+	const deletedSlice = mock.model.sharedSlice();
 
 	bulkTransaction.insertSlice(insertedSlice);
 	bulkTransaction.updateSlice(updatedSlice);
 	bulkTransaction.deleteSlice(deletedSlice);
 
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./bulk", client.endpoint).toString(),
-			async (req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				expect(await req.json()).toStrictEqual({
-					confirmDeleteDocuments: false,
-					changes: bulkTransaction.operations,
-				});
-
-				return res(ctx.status(204));
-			},
-		),
-	);
+	api.mock("./bulk", undefined, {
+		method: "post",
+		statusCode: 204,
+		requiredBody: {
+			confirmDeleteDocuments: false,
+			changes: bulkTransaction.operations,
+		},
+	});
 
 	const res = await client.bulk(bulkTransaction);
 
 	expect(res).toStrictEqual(bulkTransaction.operations);
 });
 
-it("does not delete documents by default", async (ctx) => {
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./bulk", client.endpoint).toString(),
-			async (req, res, ctx) => {
-				const body = await req.json();
-
-				expect(body.confirmDeleteDocuments).toBe(false);
-
-				return res(ctx.status(204));
-			},
-		),
-	);
+it("does not delete documents by default", async ({ client, api }) => {
+	api.mock("./bulk", undefined, {
+		method: "post",
+		statusCode: 204,
+		requiredBody: {
+			confirmDeleteDocuments: false,
+			changes: [],
+		},
+	});
 
 	await expect(client.bulk([])).resolves.not.toThrow();
 });
 
-it("allows confirming document deletion", async (ctx) => {
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./bulk", client.endpoint).toString(),
-			async (req, res, ctx) => {
-				const body = await req.json();
-
-				expect(body.confirmDeleteDocuments).toBe(true);
-
-				return res(ctx.status(204));
-			},
-		),
-	);
+it("allows confirming document deletion", async ({ client, api }) => {
+	api.mock("./bulk", undefined, {
+		method: "post",
+		statusCode: 204,
+		requiredBody: {
+			confirmDeleteDocuments: true,
+			changes: [],
+		},
+	});
 
 	await expect(
 		client.bulk([], { deleteDocuments: true }),
 	).resolves.not.toThrow();
 });
 
-it("throws BulkTransactionConfirmationError if confirmation is needed", async (ctx) => {
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./bulk", client.endpoint).toString(),
-			async (_req, res, ctx) => {
-				return res(
-					ctx.json({
-						details: {
-							customTypes: [],
-						},
-					}),
-					ctx.status(202),
-				);
-			},
-		),
+it("throws BulkTransactionConfirmationError if confirmation is needed", async ({
+	client,
+	api,
+}) => {
+	api.mock(
+		"./bulk",
+		{ details: { customTypes: [] } },
+		{ method: "post", statusCode: 202 },
 	);
 
 	await expect(async () => {
@@ -189,23 +137,14 @@ it("throws BulkTransactionConfirmationError if confirmation is needed", async (c
 	}).rejects.toThrow(prismicCustomTypes.BulkTransactionConfirmationError);
 });
 
-it("throws BulkTransactionLimitError if the command limit is reached", async (ctx) => {
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./bulk", client.endpoint).toString(),
-			async (_req, res, ctx) => {
-				return res(
-					ctx.json({
-						details: {
-							customTypes: [],
-						},
-					}),
-					ctx.status(403),
-				);
-			},
-		),
+it("throws BulkTransactionLimitError if the command limit is reached", async ({
+	client,
+	api,
+}) => {
+	api.mock(
+		"./bulk",
+		{ details: { customTypes: [] } },
+		{ method: "post", statusCode: 403 },
 	);
 
 	await expect(async () => {
@@ -213,17 +152,14 @@ it("throws BulkTransactionLimitError if the command limit is reached", async (ct
 	}).rejects.toThrow(prismicCustomTypes.BulkTransactionLimitError);
 });
 
-it("is abortable", async (ctx) => {
-	const bulkTransaction = prismicCustomTypes.createBulkTransaction();
-	bulkTransaction.insertCustomType(ctx.mock.model.customType());
+it("is abortable", async ({ client, api }) => {
+	api.mock("./bulk", undefined, { method: "post" });
 
-	const client = createClient(ctx);
 	const controller = new AbortController();
+	controller.abort();
 
 	await expect(async () => {
-		const promise = client.bulk(bulkTransaction, { signal: controller.signal });
-		controller.abort();
-		await promise;
+		await client.bulk([], { signal: controller.signal });
 	}).rejects.toThrow(/aborted/i);
 });
 

@@ -1,77 +1,50 @@
-import { expect, test } from "vitest";
+import { expect } from "vitest";
 
-import * as msw from "msw";
-
-import { createClient } from "./__testutils__/createClient";
-import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
+import { it } from "./__testutils__/it";
 import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
-import * as prismicCustomTypes from "../src";
+import { CustomTypesClientMethodParams } from "../src";
 
-test("removes a Custom Type", async (ctx) => {
-	const customType = ctx.mock.model.customType();
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.delete(
-			new URL(`./customtypes/${customType.id}`, client.endpoint).toString(),
-			(req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				return res(ctx.status(204));
-			},
-		),
-	);
-
+it("removes a custom type", async ({ client, api, customType }) => {
+	api.mock(`./customtypes/${customType.id}`, undefined, {
+		method: "delete",
+		statusCode: 204,
+	});
 	const res = await client.removeCustomType(customType.id);
-
-	expect(res).toBe(customType.id);
+	expect(res).toStrictEqual(customType.id);
 });
 
-test("uses params if provided", async (ctx) => {
-	const customType = ctx.mock.model.customType();
-	const client = createClient(ctx);
-	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
+it("uses params if provided", async ({ client, api, customType }) => {
+	const params = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
-	};
+	} satisfies CustomTypesClientMethodParams;
 
-	ctx.server.use(
-		msw.rest.delete(
-			new URL(`./customtypes/${customType.id}`, params.endpoint).toString(),
-			(req, res, ctx) => {
-				if (!isAuthorizedRequest(params, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				return res(ctx.status(204));
-			},
-		),
+	api.mock(
+		new URL(`./customtypes/${customType.id}`, params.endpoint),
+		undefined,
+		{
+			method: "delete",
+			statusCode: 204,
+			repositoryName: params.repositoryName,
+			token: params.token,
+		},
 	);
-
 	const res = await client.removeCustomType(customType.id, params);
-
-	expect(res).toBe(customType.id);
+	expect(res).toStrictEqual(customType.id);
 });
 
-test("is abortable", async (ctx) => {
-	const client = createClient(ctx);
+it("is abortable", async ({ client, api, customType }) => {
+	api.mock(`./customtypes/${customType.id}`, undefined, { method: "delete" });
 
 	const controller = new AbortController();
 	controller.abort();
 
-	await expect(async () => {
-		await client.removeCustomType("id", { signal: controller.signal });
-	}).rejects.toThrow(/aborted/i);
+	const res = client.removeCustomType(customType.id, {
+		signal: controller.signal,
+	});
+	await expect(res).rejects.toThrow(/aborted/i);
 });
 
 testFetchOptions("supports fetch options", {
@@ -80,9 +53,9 @@ testFetchOptions("supports fetch options", {
 	run: (client, params) => client.removeCustomType("id", params),
 });
 
-// NOTE: The API does not return a 4xx status code if a non-existing Custom Type
+// NOTE: The API does not return a 4xx status code if a non-existing custom type
 // is deleted. Instead, it returns 204 just like a successful deletion request.
 // As a result, we have nothing to test.
 //
 // Leave this comment to document the reasoning why no test exists for this case.
-// test.todo("throws NotFoundError if a matching Custom Type was not found");
+// test.todo("throws NotFoundError if a matching custom type was not found");

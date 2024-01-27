@@ -1,30 +1,34 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect } from "vitest";
+
+import { it } from "./__testutils__/it";
 
 import { createBulkTransaction } from "../src";
 
-it("adds operations using the difference between two sets of models", (ctx) => {
+it("adds operations using the difference between two sets of models", ({
+	mock,
+}) => {
 	const before = {
 		customTypes: [
-			ctx.mock.model.customType(),
-			ctx.mock.model.customType(),
-			ctx.mock.model.customType(),
+			mock.model.customType(),
+			mock.model.customType(),
+			mock.model.customType(),
 		],
 		slices: [
-			ctx.mock.model.sharedSlice(),
-			ctx.mock.model.sharedSlice(),
-			ctx.mock.model.sharedSlice(),
+			mock.model.sharedSlice(),
+			mock.model.sharedSlice(),
+			mock.model.sharedSlice(),
 		],
 	};
 	const after = {
 		customTypes: [
 			before.customTypes[0],
 			{ ...before.customTypes[1], label: "edited" },
-			ctx.mock.model.customType(),
+			mock.model.customType(),
 		],
 		slices: [
 			before.slices[0],
 			{ ...before.slices[1], name: "edited" },
-			ctx.mock.model.sharedSlice(),
+			mock.model.sharedSlice(),
 		],
 	};
 
@@ -66,8 +70,8 @@ it("adds operations using the difference between two sets of models", (ctx) => {
 });
 
 describe("custom type", () => {
-	it("detects creation", (ctx) => {
-		const after = ctx.mock.model.customType({ label: "after" });
+	it("detects creation", ({ mock }) => {
+		const after = mock.model.customType({ label: "after" });
 
 		const bulkTransaction = createBulkTransaction();
 		bulkTransaction.fromDiff({ customTypes: [] }, { customTypes: [after] });
@@ -81,8 +85,8 @@ describe("custom type", () => {
 		]);
 	});
 
-	it("detects updates", (ctx) => {
-		const before = ctx.mock.model.customType({ label: "before" });
+	it("detects updates", ({ mock }) => {
+		const before = mock.model.customType({ label: "before" });
 		const after = { ...before, label: "after" };
 
 		const bulkTransaction = createBulkTransaction();
@@ -100,8 +104,8 @@ describe("custom type", () => {
 		]);
 	});
 
-	it("detects deletion", (ctx) => {
-		const before = ctx.mock.model.customType({ label: "before" });
+	it("detects deletion", ({ mock }) => {
+		const before = mock.model.customType({ label: "before" });
 
 		const bulkTransaction = createBulkTransaction();
 		bulkTransaction.fromDiff({ customTypes: [before] }, { customTypes: [] });
@@ -117,8 +121,8 @@ describe("custom type", () => {
 });
 
 describe("slice", () => {
-	it("detects creation", (ctx) => {
-		const after = ctx.mock.model.sharedSlice({ name: "after" });
+	it("detects creation", ({ mock }) => {
+		const after = mock.model.sharedSlice({ name: "after" });
 
 		const bulkTransaction = createBulkTransaction();
 		bulkTransaction.fromDiff({ slices: [] }, { slices: [after] });
@@ -132,8 +136,8 @@ describe("slice", () => {
 		]);
 	});
 
-	it("detects updates", (ctx) => {
-		const before = ctx.mock.model.sharedSlice({ name: "before" });
+	it("detects updates", ({ mock }) => {
+		const before = mock.model.sharedSlice({ name: "before" });
 		const after = { ...before, name: "after" };
 
 		const bulkTransaction = createBulkTransaction();
@@ -148,8 +152,8 @@ describe("slice", () => {
 		]);
 	});
 
-	it("detects deletion", (ctx) => {
-		const before = ctx.mock.model.sharedSlice({ name: "before" });
+	it("detects deletion", ({ mock }) => {
+		const before = mock.model.sharedSlice({ name: "before" });
 
 		const bulkTransaction = createBulkTransaction();
 		bulkTransaction.fromDiff({ slices: [before] }, { slices: [] });

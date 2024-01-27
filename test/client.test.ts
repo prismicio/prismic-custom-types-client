@@ -1,108 +1,118 @@
-import { expect, test, vi } from "vitest";
+import { expect, vi } from "vitest";
 
-import * as msw from "msw";
-import { Response } from "node-fetch";
+import { it } from "./__testutils__/it";
 
-import { createClient } from "./__testutils__/createClient";
-import { createClientConfig } from "./__testutils__/createClientConfig";
+import {
+	CustomTypesClient,
+	ForbiddenError,
+	MissingFetchError,
+	PrismicError,
+	UnauthorizedError,
+	createClient,
+} from "../src";
 
-import * as prismicCustomTypes from "../src";
-
-test("createCustomTypesClient creates a CustomTypesClient", (ctx) => {
-	const config = createClientConfig(ctx);
-	const client = prismicCustomTypes.createClient(config);
-
-	expect(client).toBeInstanceOf(prismicCustomTypes.CustomTypesClient);
+it("createCustomTypesClient creates a CustomTypesClient", () => {
+	const client = createClient({
+		repositoryName: "repositoryName",
+		token: "token",
+	});
+	expect(client).toBeInstanceOf(CustomTypesClient);
 });
 
-test("has correct default state", (ctx) => {
-	const config = createClientConfig(ctx, {
+it("has correct default state", () => {
+	const fetch = vi.fn();
+	const client = createClient({
+		repositoryName: "repositoryName",
+		endpoint: "endpoint",
+		token: "token",
+		fetch,
 		fetchOptions: {
 			headers: {
 				foo: "bar",
 			},
 		},
 	});
-	const client = prismicCustomTypes.createClient(config);
 
-	expect(client.repositoryName).toBe(config.repositoryName);
-	expect(client.endpoint).toBe(config.endpoint);
-	expect(client.token).toBe(config.token);
-	expect(client.fetchFn).toBe(config.fetch);
-	expect(client.fetchOptions).toStrictEqual(config.fetchOptions);
+	expect(client.repositoryName).toBe("repositoryName");
+	expect(client.endpoint).toBe("endpoint");
+	expect(client.token).toBe("token");
+	expect(client.fetchFn).toBe(fetch);
+	expect(client.fetchOptions).toStrictEqual({
+		headers: {
+			foo: "bar",
+		},
+	});
 });
 
-test("uses the default endpoint if none is provided", (ctx) => {
-	const config = createClientConfig(ctx);
-	delete config.endpoint;
-
-	const client = prismicCustomTypes.createClient(config);
-
+it("uses the default endpoint if none is provided", () => {
+	const client = createClient({
+		repositoryName: "repositoryName",
+		token: "token",
+	});
 	expect(client.endpoint).toBe("https://customtypes.prismic.io");
 });
 
-test("supports custom endpoints that include /customtypes (for backwards compatiblity)", (ctx) => {
-	const config = createClientConfig(ctx);
-	config.endpoint = "https://example.com/customtypes";
-
-	const client = prismicCustomTypes.createClient(config);
-
+it("supports custom endpoints that include /customtypes (for backwards compatiblity)", () => {
+	const client = createClient({
+		repositoryName: "repositoryName",
+		token: "token",
+		endpoint: "https://example.com/customtypes",
+	});
 	expect(client.endpoint).toBe("https://example.com");
 });
 
-test("supports custom endpoints that include /customtypes/ (for backwards compatiblity)", (ctx) => {
-	const config = createClientConfig(ctx);
-	config.endpoint = "https://example.com/customtypes/";
-
-	const client = prismicCustomTypes.createClient(config);
-
+it("supports custom endpoints that include /customtypes/ (for backwards compatiblity)", () => {
+	const client = createClient({
+		repositoryName: "repositoryName",
+		token: "token",
+		endpoint: "https://example.com/customtypes/",
+	});
 	expect(client.endpoint).toBe("https://example.com");
 });
 
-test("constructor throws MissingFetchError if fetch is unavailable", (ctx) => {
-	const config = createClientConfig(ctx);
-	delete config.fetch;
-
+it("constructor throws MissingFetchError if fetch is unavailable", () => {
 	const originalFetch = globalThis.fetch;
 	// @ts-expect-error - Forcing fetch to be undefined
 	delete globalThis.fetch;
 
 	expect(() => {
-		prismicCustomTypes.createClient(config);
-	}).toThrow(prismicCustomTypes.MissingFetchError);
+		createClient({
+			repositoryName: "repositoryName",
+			token: "token",
+		});
+	}).toThrow(MissingFetchError);
 
 	globalThis.fetch = originalFetch;
 });
 
 // We wouldn't normally test for input types since TypeScript handles that for
 // us at build time, but we want to provide a nicer DX for non-TypeScript users.
-test("constructor throws MissingFetchError if provided fetch is not a function", (ctx) => {
-	const config = createClientConfig(ctx);
-	// @ts-expect-error - We are purposly providing an invalid type to test if it throws.
-	config.fetch = "not a function";
-
+it("constructor throws MissingFetchError if provided fetch is not a function", () => {
 	const originalFetch = globalThis.fetch;
 	// @ts-expect-error - Forcing fetch to be undefined
 	delete globalThis.fetch;
 
 	expect(() => {
-		prismicCustomTypes.createClient(config);
-	}).toThrow(prismicCustomTypes.MissingFetchError);
+		createClient({
+			repositoryName: "repositoryName",
+			token: "token",
+			// @ts-expect-error - We are purposly providing an invalid type to test if it throws.
+			fetch: "not a function",
+		});
+	}).toThrow(MissingFetchError);
 
 	globalThis.fetch = originalFetch;
 });
 
-test("uses globalThis.fetch if available", async (ctx) => {
+it("uses globalThis.fetch if available", async () => {
 	const existingFetch = globalThis.fetch;
 	const responseBody = { foo: "bar" };
-	globalThis.fetch = async () =>
-		// @ts-expect-error - node-fetch does not implement the full Response interface
-		new Response(JSON.stringify(responseBody));
+	globalThis.fetch = async () => Response.json(responseBody);
 
-	const config = createClientConfig(ctx);
-	delete config.fetch;
-
-	const client = prismicCustomTypes.createClient(config);
+	const client = createClient({
+		repositoryName: "repositoryName",
+		token: "token",
+	});
 	const fetchResponse = await client.fetchFn("");
 	const jsonResponse = await fetchResponse.json();
 
@@ -111,9 +121,13 @@ test("uses globalThis.fetch if available", async (ctx) => {
 	globalThis.fetch = existingFetch;
 });
 
-test("doesn't duplicate endpoint trailing slash", async (ctx) => {
+it("doesn't duplicate endpoint trailing slash", async () => {
 	const fetchSpy = vi.fn();
-	const client = createClient(ctx, { fetch: fetchSpy });
+	const client = createClient({
+		repositoryName: "repositoryName",
+		token: "token",
+		fetch: fetchSpy,
+	});
 
 	client.endpoint = "https://example.com";
 	try {
@@ -160,62 +174,26 @@ test("doesn't duplicate endpoint trailing slash", async (ctx) => {
 	);
 });
 
-test("throws UnauthorizedError if unauthorized", async (ctx) => {
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.get(
-			new URL("./customtypes", client.endpoint).toString(),
-			(_req, res, ctx) => {
-				// We force the API to return a 401 status code to simulate an
-				// unauthorized request.
-				return res(ctx.status(401), ctx.text("[MOCK UNAUTHORIZED ERROR]"));
-			},
-		),
-	);
-
+it("throws UnauthorizedError if unauthorized", async ({ client, api }) => {
+	api.mock("./customtypes", undefined, { statusCode: 401 });
 	await expect(async () => {
 		await client.getAllCustomTypes();
-	}).rejects.toThrow(prismicCustomTypes.UnauthorizedError);
+	}).rejects.toThrow(UnauthorizedError);
 });
 
-test("throws ForbiddenError if forbidden", async (ctx) => {
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.get(
-			new URL("./customtypes", client.endpoint).toString(),
-			(_req, res, ctx) => {
-				// We force the API to return a 403 status code to simulate an
-				// unauthorized request.
-				return res(
-					ctx.status(403),
-					ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-				);
-			},
-		),
-	);
-
+it("throws ForbiddenError if forbidden", async ({ client, api }) => {
+	api.mock("./customtypes", {}, { statusCode: 403 });
 	await expect(async () => {
 		await client.getAllCustomTypes();
-	}).rejects.toThrow(prismicCustomTypes.ForbiddenError);
+	}).rejects.toThrow(ForbiddenError);
 });
 
-test("throws PrismicError if an unsupported response is returned", async (ctx) => {
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.get(
-			new URL("./customtypes", client.endpoint).toString(),
-			(_req, res, ctx) => {
-				// We force the API to return a 418 status code (I'm a teapot) to simulate
-				// an unsupported response.
-				return res(ctx.status(418));
-			},
-		),
-	);
-
+it("throws PrismicError if an unsupported response is returned", async ({
+	client,
+	api,
+}) => {
+	api.mock("./customtypes", undefined, { statusCode: 418 });
 	await expect(async () => {
 		await client.getAllCustomTypes();
-	}).rejects.toThrow(prismicCustomTypes.PrismicError);
+	}).rejects.toThrow(PrismicError);
 });
