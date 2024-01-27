@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/prismicio/prismic-custom-types-client/compare/v1.2.0...v1.3.0) (2024-01-27)
+
+
+### Features
+
+* support bulk transactions ([#10](https://github.com/prismicio/prismic-custom-types-client/issues/10)) ([38968f7](https://github.com/prismicio/prismic-custom-types-client/commit/38968f779b00ce8d62495438c14b87b2fe3c8f13))
+
+
+### Bug Fixes
+
+* replace `@prismicio/types` with `@prismicio/client` ([#11](https://github.com/prismicio/prismic-custom-types-client/issues/11)) ([77474e6](https://github.com/prismicio/prismic-custom-types-client/commit/77474e63f6907639f3f3ed8c7a9cee80116e8692))
+
+
+### Chore
+
+* **deps:** update all dependencies ([#12](https://github.com/prismicio/prismic-custom-types-client/issues/12)) ([2c5330e](https://github.com/prismicio/prismic-custom-types-client/commit/2c5330e41c921f7d536db4a84c021ffd4776ed74))
+
 ## [1.2.0](https://github.com/prismicio/prismic-custom-types-client/compare/v1.1.0...v1.2.0) (2023-12-05)
 
 
