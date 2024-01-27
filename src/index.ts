@@ -5,6 +5,13 @@ export type {
 } from "./client";
 
 export {
+	createBulkTransaction,
+	BulkTransaction,
+	BulkOperationType,
+} from "./bulk";
+export type { BulkOperation, BulkTransactionModels } from "./bulk";
+
+export {
 	PrismicError,
 	ConflictError,
 	ForbiddenError,
@@ -12,6 +19,8 @@ export {
 	InvalidPayloadError,
 	MissingFetchError,
 	NotFoundError,
+	BulkTransactionLimitError,
+	BulkTransactionConfirmationError,
 } from "./errors";
 
 export type { FetchLike, ResponseLike, RequestInitLike } from "./types";

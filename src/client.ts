@@ -9,7 +9,10 @@ import {
 	ForbiddenError,
 	UnauthorizedError,
 	InvalidPayloadError,
+	BulkTransactionConfirmationError,
+	BulkTransactionLimitError,
 } from "./errors";
+import { BulkOperation, BulkTransaction } from "./bulk";
 
 /**
  * The default endpoint for the Prismic Custom Types API.
@@ -78,6 +81,19 @@ type FetchParams = {
 	 * {@link https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal}
 	 */
 	signal?: AbortSignalLike;
+};
+
+/**
+ * Parameters for the `bulk()` client method.
+ */
+type BulkParams = {
+	/**
+	 * Determines if the method stops a bulk request if the changes require
+	 * deleting Prismic documents.
+	 *
+	 * @defaultValue false
+	 */
+	deleteDocuments?: boolean;
 };
 
 /**
@@ -410,6 +426,48 @@ export class CustomTypesClient {
 	}
 
 	/**
+	 * Performs multiple insert, update, and/or delete operations in a single
+	 * transaction.
+	 *
+	 * @example
+	 *
+	 * ```ts
+	 * const bulkTransaction = createBulkTransaction();
+	 * bulkTransaction.insertCustomType(myCustomType);
+	 * bulkTransaction.deleteSlice(mySlice);
+	 *
+	 * await client.bulk(bulkTransaction);
+	 * ```
+	 *
+	 * @param operations - A `BulkTransaction` containing all operations or an
+	 *   array of objects describing an operation.
+	 * @param params - Parameters that determine how the method behaves and for
+	 *   overriding the client's default configuration.
+	 *
+	 * @returns An array of objects describing the operations.
+	 */
+	async bulk(
+		operations: BulkTransaction | BulkOperation[],
+		params?: BulkParams & CustomTypesClientMethodParams & FetchParams,
+	): Promise<BulkOperation[]> {
+		const resolvedOperations =
+			operations instanceof BulkTransaction
+				? operations.operations
+				: operations;
+
+		await this.fetch(
+			"./bulk",
+			params,
+			createPostFetchRequestInit({
+				confirmDeleteDocuments: params?.deleteDocuments ?? false,
+				changes: resolvedOperations,
+			}),
+		);
+
+		return resolvedOperations;
+	}
+
+	/**
 	 * Performs a network request using the configured `fetch` function. It
 	 * assumes all successful responses will have a JSON content type. It also
 	 * normalizes unsuccessful network requests.
@@ -482,6 +540,17 @@ export class CustomTypesClient {
 				return undefined as any;
 			}
 
+			// Accepted
+			// - Soft limit reached for bulk request (requires confirmation)
+			case 202: {
+				const json = await res.json();
+
+				throw new BulkTransactionConfirmationError(
+					"The bulk transaction will delete documents. Confirm before trying again.",
+					{ url, response: json },
+				);
+			}
+
 			// Bad Request
 			// - Invalid body sent
 			case 400: {
@@ -501,8 +570,16 @@ export class CustomTypesClient {
 			// Forbidden
 			// - Missing token
 			// - Incorrect token
+			// - Hard limit reached for bulk request (cannot process)
 			case 403: {
 				const json = await res.json();
+
+				if ("details" in json) {
+					throw new BulkTransactionLimitError(
+						"The bulk transaction reached or surpassed the limit of allowed commands.",
+						{ url, response: json },
+					);
+				}
 
 				throw new ForbiddenError(json.message, { url, response: json });
 			}
