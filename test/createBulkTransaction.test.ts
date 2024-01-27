@@ -1,4 +1,6 @@
-import { it, expect } from "vitest";
+import { expect } from "vitest";
+
+import { it } from "./__testutils__/it";
 
 import { createBulkTransaction } from "../src";
 
@@ -8,12 +10,12 @@ it("starts with an empty array of operations", () => {
 	expect(bulkTransaction.operations).toStrictEqual([]);
 });
 
-it("supports custom type operations", (ctx) => {
+it("supports custom type operations", ({ mock }) => {
 	const bulkTransaction = createBulkTransaction();
 
-	const insertedCustomType = ctx.mock.model.customType();
-	const updatedCustomType = ctx.mock.model.customType();
-	const deletedCustomType = ctx.mock.model.customType();
+	const insertedCustomType = mock.model.customType();
+	const updatedCustomType = mock.model.customType();
+	const deletedCustomType = mock.model.customType();
 
 	bulkTransaction.insertCustomType(insertedCustomType);
 	bulkTransaction.updateCustomType(updatedCustomType);
@@ -38,12 +40,12 @@ it("supports custom type operations", (ctx) => {
 	]);
 });
 
-it("supports slice operations", (ctx) => {
+it("supports slice operations", ({ mock }) => {
 	const bulkTransaction = createBulkTransaction();
 
-	const insertedSlice = ctx.mock.model.sharedSlice();
-	const updatedSlice = ctx.mock.model.sharedSlice();
-	const deletedSlice = ctx.mock.model.sharedSlice();
+	const insertedSlice = mock.model.sharedSlice();
+	const updatedSlice = mock.model.sharedSlice();
+	const deletedSlice = mock.model.sharedSlice();
 
 	bulkTransaction.insertSlice(insertedSlice);
 	bulkTransaction.updateSlice(updatedSlice);
@@ -68,10 +70,10 @@ it("supports slice operations", (ctx) => {
 	]);
 });
 
-it("supports initial operations", (ctx) => {
-	const insertedCustomType = ctx.mock.model.customType();
-	const updatedCustomType = ctx.mock.model.customType();
-	const deletedCustomType = ctx.mock.model.customType();
+it("supports initial operations", ({ mock }) => {
+	const insertedCustomType = mock.model.customType();
+	const updatedCustomType = mock.model.customType();
+	const deletedCustomType = mock.model.customType();
 
 	const bulkTransaction1 = createBulkTransaction();
 	bulkTransaction1.insertCustomType(insertedCustomType);
@@ -99,10 +101,10 @@ it("supports initial operations", (ctx) => {
 	]);
 });
 
-it("supports initial BulkTransaction", (ctx) => {
-	const insertedCustomType = ctx.mock.model.customType();
-	const updatedCustomType = ctx.mock.model.customType();
-	const deletedCustomType = ctx.mock.model.customType();
+it("supports initial BulkTransaction", ({ mock }) => {
+	const insertedCustomType = mock.model.customType();
+	const updatedCustomType = mock.model.customType();
+	const deletedCustomType = mock.model.customType();
 
 	const bulkTransaction1 = createBulkTransaction();
 	bulkTransaction1.insertCustomType(insertedCustomType);

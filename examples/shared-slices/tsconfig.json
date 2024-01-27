@@ -4,7 +4,7 @@
 		"target": "ESNext",
 		"module": "ESNext",
 		"lib": ["ESNext"],
-		"moduleResolution": "Node"
+		"moduleResolution": "Node",
 	},
-	"include": ["index.ts"]
+	"include": ["index.ts"],
 }

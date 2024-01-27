@@ -1,142 +1,84 @@
-import { test, expect } from "vitest";
-import * as msw from "msw";
-import * as assert from "assert";
+import { expect } from "vitest";
+
 import * as prismic from "@prismicio/client";
 
-import { createClient } from "./__testutils__/createClient";
-import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
+import { it } from "./__testutils__/it";
 import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
-import * as prismicCustomTypes from "../src";
+import {
+	CustomTypesClientMethodParams,
+	InvalidPayloadError,
+	NotFoundError,
+} from "../src";
 
-test("updates a Custom Type", async (ctx) => {
-	const sharedSlice = ctx.mock.model.sharedSlice();
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./slices/update", client.endpoint).toString(),
-			async (req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				assert.deepStrictEqual(await req.json(), sharedSlice);
-
-				return res(ctx.status(204));
-			},
-		),
-	);
-
-	const res = await client.updateSharedSlice(sharedSlice);
-
-	expect(res).toStrictEqual(sharedSlice);
+it("updates a slice", async ({ client, api, slice }) => {
+	api.mock("./slices/update", undefined, {
+		method: "post",
+		statusCode: 204,
+		requiredBody: slice,
+	});
+	const res = await client.updateSharedSlice(slice);
+	expect(res).toStrictEqual(slice);
 });
 
-test("uses params if provided", async (ctx) => {
-	const sharedSlice = ctx.mock.model.sharedSlice();
-	const client = createClient(ctx);
-	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
+it("uses params if provided", async ({ client, api, slice }) => {
+	const params = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
-	};
+	} satisfies CustomTypesClientMethodParams;
 
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./slices/update", params.endpoint).toString(),
-			async (req, res, ctx) => {
-				if (!isAuthorizedRequest(params, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				assert.deepStrictEqual(await req.json(), sharedSlice);
-
-				return res(ctx.status(204));
-			},
-		),
-	);
-
-	const res = await client.updateSharedSlice(sharedSlice, params);
-
-	expect(res).toStrictEqual(sharedSlice);
+	api.mock(new URL("./slices/update", params.endpoint), undefined, {
+		method: "post",
+		statusCode: 204,
+		requiredBody: slice,
+		repositoryName: params.repositoryName,
+		token: params.token,
+	});
+	const res = await client.updateSharedSlice(slice, params);
+	expect(res).toStrictEqual(slice);
 });
 
-test("throws NotFoundError if a matching Custom Type was not found", async (ctx) => {
-	const sharedSlice = ctx.mock.model.sharedSlice();
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./slices/update", client.endpoint).toString(),
-			async (req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				assert.deepStrictEqual(await req.json(), sharedSlice);
-
-				return res(ctx.status(422));
-			},
-		),
-	);
-
+it("throws NotFoundError if a matching slice was not found", async ({
+	client,
+	api,
+	slice,
+}) => {
+	api.mock("./slices/update", undefined, {
+		method: "post",
+		statusCode: 422,
+		requiredBody: slice,
+	});
 	await expect(async () => {
-		await client.updateSharedSlice(sharedSlice);
-	}).rejects.toThrow(prismicCustomTypes.NotFoundError);
+		await client.updateSharedSlice(slice);
+	}).rejects.toThrow(NotFoundError);
 });
 
-test("throws InvalidPayloadError if an invalid Shared Slice is sent", async (ctx) => {
-	const sharedSlice = ctx.mock.model.sharedSlice();
-	const client = createClient(ctx);
-	const message = "[MOCK INVALID PAYLOAD ERROR]";
-
-	ctx.server.use(
-		msw.rest.post(
-			new URL("./slices/update", client.endpoint).toString(),
-			async (req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				assert.deepStrictEqual(await req.json(), sharedSlice);
-
-				// We force the API to return a 400 status code to simulate an invalid
-				// payload error.
-				return res(ctx.status(400), ctx.text(message));
-			},
-		),
-	);
-
+it("throws InvalidPayloadError if an invalid slice is sent", async ({
+	client,
+	api,
+	slice,
+}) => {
+	api.mock("./slices/update", undefined, {
+		method: "post",
+		statusCode: 400,
+		requiredBody: slice,
+	});
 	await expect(async () => {
-		await client.updateSharedSlice(sharedSlice);
-	}).rejects.toThrow(prismicCustomTypes.InvalidPayloadError);
+		await client.updateSharedSlice(slice);
+	}).rejects.toThrow(InvalidPayloadError);
 });
 
-// TODO: This test fails for unknown reasons. The POST fetch request seems to
-// throw outside the `async/await` instruction.
-test.skip("is abortable", async (ctx) => {
-	const sharedSlice = ctx.mock.model.sharedSlice();
-	const client = createClient(ctx);
+it("is abortable", async ({ client, api, slice }) => {
+	api.mock("./slices/update", undefined, { method: "post" });
 
 	const controller = new AbortController();
 	controller.abort();
 
-	await expect(async () => {
-		await client.updateSharedSlice(sharedSlice, { signal: controller.signal });
-	}).rejects.toThrow(/aborted/i);
+	const res = client.updateSharedSlice(slice, {
+		signal: controller.signal,
+	});
+	await expect(res).rejects.toThrow(/aborted/i);
 });
 
 testFetchOptions("supports fetch options", {

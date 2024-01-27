@@ -1,16 +1,15 @@
-import { expect, it, vi } from "vitest";
-import * as msw from "msw";
+import { expect, vi } from "vitest";
 
-import fetch from "node-fetch";
+import { RequestInitLike } from "@prismicio/client/*";
+import { http } from "msw";
 
-import { createClient } from "./createClient";
-import { isAuthorizedRequest } from "./isAuthorizedRequest";
+import { it } from "./it";
 
 import * as lib from "../../src";
 
 type TestFetchOptionsArgs = {
 	mockURL: (client: lib.CustomTypesClient) => URL;
-	mockURLMethod?: keyof typeof msw.rest;
+	mockURLMethod?: keyof typeof http;
 	run: (
 		client: lib.CustomTypesClient,
 		params?: Parameters<lib.CustomTypesClient["getAllCustomTypes"]>[0],
@@ -21,11 +20,11 @@ export const testFetchOptions = (
 	description: string,
 	args: TestFetchOptionsArgs,
 ): void => {
-	it.concurrent(`${description} (on client)`, async (ctx) => {
+	it(`${description} (on client)`, async ({ client, api }) => {
 		const abortController = new AbortController();
 
-		const fetchSpy = vi.fn(fetch);
-		const fetchOptions: lib.RequestInitLike = {
+		client.fetchFn = vi.fn(fetch);
+		client.fetchOptions = {
 			cache: "no-store",
 			headers: {
 				foo: "bar",
@@ -33,44 +32,30 @@ export const testFetchOptions = (
 			signal: abortController.signal,
 		};
 
-		const client = createClient(ctx, {
-			fetch: fetchSpy,
-			fetchOptions,
-		});
-
-		ctx.server.use(
-			msw.rest[args.mockURLMethod || "get"](
-				args.mockURL(client).toString(),
-				(req, res, ctx) => {
-					if (!isAuthorizedRequest(client, req)) {
-						return res(
-							ctx.status(403),
-							ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-						);
-					}
-
-					return res(ctx.json({}));
-				},
-			),
-		);
+		api.mock(args.mockURL(client), {}, { method: args.mockURLMethod });
 
 		await args.run(client);
 
-		for (const [input, init] of fetchSpy.mock.calls) {
+		for (const [input, init] of vi.mocked(client.fetchFn).mock.calls) {
 			expect(init, input.toString()).toStrictEqual(
 				expect.objectContaining({
-					...fetchOptions,
-					headers: expect.objectContaining(fetchOptions.headers),
+					...client.fetchOptions,
+					headers: expect.objectContaining(client.fetchOptions.headers),
 				}),
 			);
 		}
 	});
 
-	it.concurrent(`${description} (on method)`, async (ctx) => {
+	it.concurrent(`${description} (on method)`, async ({ client, api, mock }) => {
 		const abortController = new AbortController();
 
-		const fetchSpy = vi.fn(fetch);
-		const fetchOptions: lib.RequestInitLike = {
+		client.fetchFn = vi.fn(fetch);
+
+		api.mock(args.mockURL(client), [mock.model.customType()], {
+			method: args.mockURLMethod,
+		});
+
+		const fetchOptions: RequestInitLike = {
 			cache: "no-store",
 			headers: {
 				foo: "bar",
@@ -78,30 +63,9 @@ export const testFetchOptions = (
 			signal: abortController.signal,
 		};
 
-		const client = createClient(ctx, {
-			fetch: fetchSpy,
-		});
-
-		const queryResponse = [ctx.mock.model.customType()];
-		ctx.server.use(
-			msw.rest[args.mockURLMethod || "get"](
-				args.mockURL(client).toString(),
-				(req, res, ctx) => {
-					if (!isAuthorizedRequest(client, req)) {
-						return res(
-							ctx.status(403),
-							ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-						);
-					}
-
-					return res(ctx.json(queryResponse));
-				},
-			),
-		);
-
 		await args.run(client, { fetchOptions });
 
-		for (const [input, init] of fetchSpy.mock.calls) {
+		for (const [input, init] of vi.mocked(client.fetchFn).mock.calls) {
 			expect(init, input.toString()).toStrictEqual(
 				expect.objectContaining({
 					...fetchOptions,

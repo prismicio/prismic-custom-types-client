@@ -1,76 +1,39 @@
-import { test, expect } from "vitest";
-import * as msw from "msw";
+import { expect } from "vitest";
 
-import { createClient } from "./__testutils__/createClient";
-import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
+import { it } from "./__testutils__/it";
 import { testFetchOptions } from "./__testutils__/testFetchOptions";
 
-import * as prismicCustomTypes from "../src";
+import { CustomTypesClientMethodParams } from "../src";
 
-test("returns all Custom Types", async (ctx) => {
-	const queryResponse = [ctx.mock.model.customType()];
-	const client = createClient(ctx);
-
-	ctx.server.use(
-		msw.rest.get(
-			new URL("./customtypes", client.endpoint).toString(),
-			(req, res, ctx) => {
-				if (!isAuthorizedRequest(client, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				return res(ctx.json(queryResponse));
-			},
-		),
-	);
-
+it("returns all custom types", async ({ client, api, customType }) => {
+	api.mock("./customtypes", [customType]);
 	const res = await client.getAllCustomTypes();
-
-	expect(res).toStrictEqual(queryResponse);
+	expect(res).toStrictEqual([customType]);
 });
 
-test("uses params if provided", async (ctx) => {
-	const queryResponse = [ctx.mock.model.customType()];
-	const client = createClient(ctx);
-	const params: Required<prismicCustomTypes.CustomTypesClientMethodParams> = {
+it("uses params if provided", async ({ client, api, customType }) => {
+	const params = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
 		endpoint: "https://custom-endpoint.example.com",
-	};
+	} satisfies CustomTypesClientMethodParams;
 
-	ctx.server.use(
-		msw.rest.get(
-			new URL("./customtypes", params.endpoint).toString(),
-			(req, res, ctx) => {
-				if (!isAuthorizedRequest(params, req)) {
-					return res(
-						ctx.status(403),
-						ctx.json({ message: "[MOCK FORBIDDEN ERROR]" }),
-					);
-				}
-
-				return res(ctx.json(queryResponse));
-			},
-		),
-	);
-
+	api.mock(new URL("./customtypes", params.endpoint), [customType], {
+		repositoryName: params.repositoryName,
+		token: params.token,
+	});
 	const res = await client.getAllCustomTypes(params);
-
-	expect(res).toStrictEqual(queryResponse);
+	expect(res).toStrictEqual([customType]);
 });
 
-test("is abortable", async (ctx) => {
+it("is abortable", async ({ client, api }) => {
+	api.mock("./customtypes");
+
 	const controller = new AbortController();
 	controller.abort();
 
-	const client = createClient(ctx);
-
-	await expect(async () => {
-		await client.getAllCustomTypes({ signal: controller.signal });
-	}).rejects.toThrow(/aborted/i);
+	const res = client.getAllCustomTypes({ signal: controller.signal });
+	await expect(res).rejects.toThrow(/aborted/i);
 });
 
 testFetchOptions("supports fetch options", {
