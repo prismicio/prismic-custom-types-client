@@ -1,4 +1,5 @@
-import { test, expect } from "vitest";
+import { expect, test } from "vitest";
+
 import * as msw from "msw";
 
 import { createClient } from "./__testutils__/createClient";

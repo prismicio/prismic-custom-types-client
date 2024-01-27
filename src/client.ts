@@ -1,17 +1,19 @@
 import type * as prismic from "@prismicio/client";
 
 import type { AbortSignalLike, FetchLike, RequestInitLike } from "./types";
+
 import {
-	PrismicError,
-	MissingFetchError,
-	ConflictError,
-	NotFoundError,
-	ForbiddenError,
-	UnauthorizedError,
-	InvalidPayloadError,
 	BulkTransactionConfirmationError,
 	BulkTransactionLimitError,
+	ConflictError,
+	ForbiddenError,
+	InvalidPayloadError,
+	MissingFetchError,
+	NotFoundError,
+	PrismicError,
+	UnauthorizedError,
 } from "./errors";
+
 import { BulkOperation, BulkTransaction } from "./bulk";
 
 /**
@@ -199,9 +201,11 @@ export class CustomTypesClient {
 	 * Returns all Custom Types models from the Prismic repository.
 	 *
 	 * @typeParam TCustomType - The Custom Type returned from the API.
+	 *
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns All Custom Type models from the Prismic repository.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 */
@@ -215,10 +219,12 @@ export class CustomTypesClient {
 	 * Returns a Custom Type model with a given ID from the Prismic repository.
 	 *
 	 * @typeParam TCustomType - The Custom Type returned from the API.
+	 *
 	 * @param id - ID of the Custom Type.
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The Custom Type model from the Prismic repository.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 * @throws {@link NotFoundError} Thrown if a Custom Type with the given ID
@@ -235,10 +241,12 @@ export class CustomTypesClient {
 	 * Inserts a Custom Type model to the Prismic repository.
 	 *
 	 * @typeParam TCustomType - The Custom Type to insert.
+	 *
 	 * @param customType - The Custom Type to insert.
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The inserted Custom Type.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 * @throws {@link InvalidPayloadError} Thrown if an invalid Custom Type is
@@ -263,10 +271,12 @@ export class CustomTypesClient {
 	 * Updates a Custom Type model from the Prismic repository.
 	 *
 	 * @typeParam TCustomType - The updated Custom Type.
+	 *
 	 * @param customType - The updated Custom Type.
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The updated Custom Type.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 * @throws {@link InvalidPayloadError} Thrown if an invalid Custom Type is
@@ -291,10 +301,12 @@ export class CustomTypesClient {
 	 * Removes a Custom Type model from the Prismic repository.
 	 *
 	 * @typeParam TCustomTypeID - The ID of the Custom Type.
+	 *
 	 * @param id - The ID of the Custom Type to remove.
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The ID of the removed Custom Type.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 */
@@ -314,9 +326,11 @@ export class CustomTypesClient {
 	 *
 	 * @typeParam TSharedSliceModel - The Shared Slice model returned from the
 	 *   API.
+	 *
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns All Shared Slice models from the Prismic repository.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 */
@@ -331,10 +345,12 @@ export class CustomTypesClient {
 	 *
 	 * @typeParam TSharedSliceModel - The Shared Slice model returned from the
 	 *   API.
+	 *
 	 * @param id - ID of the Shared Slice.
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The Shared Slice model from the Prismic repository.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 * @throws {@link NotFoundError} Thrown if a Shared Slice with the given ID
@@ -351,10 +367,12 @@ export class CustomTypesClient {
 	 * Inserts a Shared Slice model to the Prismic repository.
 	 *
 	 * @typeParam TSharedSliceModel - The Shared Slice model to insert.
+	 *
 	 * @param slice - The Shared Slice model to insert.
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The inserted Shared Slice model.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 * @throws {@link InvalidPayloadError} Thrown if an invalid Shared Slice model
@@ -379,10 +397,12 @@ export class CustomTypesClient {
 	 * Updates a Shared Slice model from the Prismic repository.
 	 *
 	 * @typeParam TSharedSliceModel - The updated Shared Slice model.
+	 *
 	 * @param slice - The updated Shared Slice model.
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The updated Shared Slice model.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 * @throws {@link InvalidPayloadError} Thrown if an invalid Shared Slice model
@@ -407,10 +427,12 @@ export class CustomTypesClient {
 	 * Removes a Shared Slice model from the Prismic repository.
 	 *
 	 * @typeParam TSharedSliceID - The ID of the Shared Slice.
+	 *
 	 * @param id - The ID of the Shared Slice to remove.
 	 * @param params - Parameters to override the client's default configuration.
 	 *
 	 * @returns The ID of the removed Shared Slice.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 */
@@ -473,11 +495,13 @@ export class CustomTypesClient {
 	 * normalizes unsuccessful network requests.
 	 *
 	 * @typeParam T - The JSON response.
+	 *
 	 * @param path - URL to the resource to fetch.
 	 * @param params - Parameters to override the client's default configuration.
 	 * @param requestInit - `RequestInit` overrides for the `fetch` request.
 	 *
 	 * @returns The response from the network request, if any.
+	 *
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 * @throws {@link InvalidPayloadError} Thrown if the given body is invalid.

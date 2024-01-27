@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vitest";
-import * as msw from "msw";
 
+import * as msw from "msw";
 import fetch from "node-fetch";
 
 import { createClient } from "./createClient";

@@ -1,7 +1,8 @@
-import { test, expect } from "vitest";
-import * as msw from "msw";
-import * as assert from "assert";
+import { expect, test } from "vitest";
+
 import * as prismic from "@prismicio/client";
+import * as assert from "assert";
+import * as msw from "msw";
 
 import { createClient } from "./__testutils__/createClient";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";

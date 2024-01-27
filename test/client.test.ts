@@ -1,9 +1,10 @@
-import { test, expect, vi } from "vitest";
+import { expect, test, vi } from "vitest";
+
 import * as msw from "msw";
 import { Response } from "node-fetch";
 
-import { createClientConfig } from "./__testutils__/createClientConfig";
 import { createClient } from "./__testutils__/createClient";
+import { createClientConfig } from "./__testutils__/createClientConfig";
 
 import * as prismicCustomTypes from "../src";
 
