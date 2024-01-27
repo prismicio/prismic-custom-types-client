@@ -11,7 +11,7 @@ it("returns all slices", async ({ client, api, slice }) => {
 	expect(res).toStrictEqual([slice]);
 });
 
-it.only("uses params if provided", async ({ client, api, slice }) => {
+it("uses params if provided", async ({ client, api, slice }) => {
 	const params = {
 		repositoryName: "custom-repositoryName",
 		token: "custom-token",
