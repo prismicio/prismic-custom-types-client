@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 import * as msw from "msw";
 import * as assert from "assert";
-import * as prismicT from "@prismicio/types";
+import * as prismic from "@prismicio/client";
 
 import { createClient } from "./__testutils__/createClient";
 import { isAuthorizedRequest } from "./__testutils__/isAuthorizedRequest";
@@ -143,5 +143,5 @@ testFetchOptions("supports fetch options", {
 	mockURL: (client) => new URL("./slices/update", client.endpoint),
 	mockURLMethod: "post",
 	run: (client, params) =>
-		client.updateSharedSlice({} as prismicT.SharedSliceModel, params),
+		client.updateSharedSlice({} as prismic.SharedSliceModel, params),
 });
