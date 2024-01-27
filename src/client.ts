@@ -1,4 +1,4 @@
-import type * as prismicT from "@prismicio/types";
+import type * as prismic from "@prismicio/client";
 
 import type { AbortSignalLike, FetchLike, RequestInitLike } from "./types";
 import {
@@ -189,7 +189,7 @@ export class CustomTypesClient {
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 */
-	async getAllCustomTypes<TCustomType extends prismicT.CustomTypeModel>(
+	async getAllCustomTypes<TCustomType extends prismic.CustomTypeModel>(
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType[]> {
 		return await this.fetch<TCustomType[]>("./customtypes", params);
@@ -208,7 +208,7 @@ export class CustomTypesClient {
 	 * @throws {@link NotFoundError} Thrown if a Custom Type with the given ID
 	 *   cannot be found.
 	 */
-	async getCustomTypeByID<TCustomType extends prismicT.CustomTypeModel>(
+	async getCustomTypeByID<TCustomType extends prismic.CustomTypeModel>(
 		id: string,
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType> {
@@ -230,7 +230,7 @@ export class CustomTypesClient {
 	 * @throws {@link ConflictError} Thrown if a Custom Type with the given ID
 	 *   already exists.
 	 */
-	async insertCustomType<TCustomType extends prismicT.CustomTypeModel>(
+	async insertCustomType<TCustomType extends prismic.CustomTypeModel>(
 		customType: TCustomType,
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType> {
@@ -258,7 +258,7 @@ export class CustomTypesClient {
 	 * @throws {@link NotFoundError} Thrown if a Custom Type with the given ID
 	 *   cannot be found.
 	 */
-	async updateCustomType<TCustomType extends prismicT.CustomTypeModel>(
+	async updateCustomType<TCustomType extends prismic.CustomTypeModel>(
 		customType: TCustomType,
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TCustomType> {
@@ -304,7 +304,7 @@ export class CustomTypesClient {
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
 	 *   requests.
 	 */
-	async getAllSharedSlices<TSharedSliceModel extends prismicT.SharedSliceModel>(
+	async getAllSharedSlices<TSharedSliceModel extends prismic.SharedSliceModel>(
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel[]> {
 		return await this.fetch<TSharedSliceModel[]>("./slices", params);
@@ -324,7 +324,7 @@ export class CustomTypesClient {
 	 * @throws {@link NotFoundError} Thrown if a Shared Slice with the given ID
 	 *   cannot be found.
 	 */
-	async getSharedSliceByID<TSharedSliceModel extends prismicT.SharedSliceModel>(
+	async getSharedSliceByID<TSharedSliceModel extends prismic.SharedSliceModel>(
 		id: string,
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel> {
@@ -346,7 +346,7 @@ export class CustomTypesClient {
 	 * @throws {@link ConflictError} Thrown if a Shared Slice with the given ID
 	 *   already exists.
 	 */
-	async insertSharedSlice<TSharedSliceModel extends prismicT.SharedSliceModel>(
+	async insertSharedSlice<TSharedSliceModel extends prismic.SharedSliceModel>(
 		slice: TSharedSliceModel,
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel> {
@@ -374,7 +374,7 @@ export class CustomTypesClient {
 	 * @throws {@link NotFoundError} Thrown if a Shared Slice with the given ID
 	 *   cannot be found.
 	 */
-	async updateSharedSlice<TSharedSliceModel extends prismicT.SharedSliceModel>(
+	async updateSharedSlice<TSharedSliceModel extends prismic.SharedSliceModel>(
 		slice: TSharedSliceModel,
 		params?: CustomTypesClientMethodParams & FetchParams,
 	): Promise<TSharedSliceModel> {
