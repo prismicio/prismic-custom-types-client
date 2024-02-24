@@ -1,6 +1,11 @@
 import type * as prismic from "@prismicio/client";
 
-import type { AbortSignalLike, FetchLike, RequestInitLike } from "./types";
+import type {
+	AbortSignalLike,
+	FetchLike,
+	RequestInitLike,
+	ScreenshotACLResponse,
+} from "./types";
 
 import {
 	BulkTransactionConfirmationError,
@@ -20,6 +25,17 @@ import { BulkOperation, BulkTransaction } from "./bulk";
  * The default endpoint for the Prismic Custom Types API.
  */
 const DEFAULT_CUSTOM_TYPES_API_ENDPOINT = "https://customtypes.prismic.io";
+
+/**
+ * The default ACL endpoint for the Prismic S3 screenshots bucket.
+ */
+const DEFAULT_SCREENSHOT_ACL_ENDPOINT =
+	"https://0yyeb2g040.execute-api.us-east-1.amazonaws.com/prod/";
+
+/**
+ * The lifetime of a screnshot ACL in milliseconds.
+ */
+const SCREENSHOT_ACL_TTL = 300_000;
 
 /**
  * Configuration for creating a `CustomTypesClient`.
@@ -55,6 +71,12 @@ export type CustomTypesClientConfig = {
 	 * overriden on a per-query basis using the query's `fetchOptions` parameter.
 	 */
 	fetchOptions?: RequestInitLike;
+
+	/**
+	 * The ACL endpoint for the Prismic S3 screenshots bucket. The standard
+	 * endpoint will be used if no value is provided.
+	 */
+	screenshotACLEndpoint: string;
 };
 
 /**
@@ -98,6 +120,12 @@ type BulkParams = {
 	deleteDocuments?: boolean;
 };
 
+type ScreenshotACL = {
+	uploadEndpoint: string;
+	imgixEndpoint: string;
+	formDataFields: Record<string, string>;
+};
+
 /**
  * Create a `RequestInit` object for a POST `fetch` request. The provided body
  * will be run through `JSON.stringify`.
@@ -111,6 +139,15 @@ const createPostFetchRequestInit = <T>(body: T): RequestInitLike => {
 		method: "POST",
 		body: JSON.stringify(body),
 	};
+};
+
+const updateSliceVariationImageInPlace = async <
+	TSharedSliceModelVariation extends prismic.SharedSliceModelVariation,
+>(
+	variation: TSharedSliceModelVariation,
+	url: URL,
+): Promise<TSharedSliceModelVariation> => {
+	return { ...variation, imageUrl: url.toString() };
 };
 
 /**
@@ -160,6 +197,15 @@ export class CustomTypesClient {
 	fetchOptions?: RequestInitLike;
 
 	/**
+	 * The ACL endpoint for the Prismic S3 screenshots bucket. The standard
+	 * endpoint will be used if no value is provided.
+	 */
+	screenshotACLEndpoint: string;
+
+	private screenshotACL?: ScreenshotACL;
+	private screenshotACLExpiresAt?: number;
+
+	/**
 	 * Create a client for the Prismic Custom Types API.
 	 */
 	constructor(config: CustomTypesClientConfig) {
@@ -167,6 +213,8 @@ export class CustomTypesClient {
 		this.endpoint = config.endpoint || DEFAULT_CUSTOM_TYPES_API_ENDPOINT;
 		this.token = config.token;
 		this.fetchOptions = config.fetchOptions;
+		this.screenshotACLEndpoint =
+			config.screenshotACLEndpoint || DEFAULT_SCREENSHOT_ACL_ENDPOINT;
 
 		// TODO: Remove the following `if` statement in v2.
 		//
@@ -487,6 +535,74 @@ export class CustomTypesClient {
 		);
 
 		return resolvedOperations;
+	}
+
+	private async uploadImage(data: Blob): Promise<URL> {
+		const acl = await this.fetchScreenshotACL();
+
+		const formData = new FormData();
+		for (const fieldKey in acl.formDataFields) {
+			formData.append(fieldKey, acl.formDataFields[fieldKey]);
+		}
+
+		// TODO: Send the image. See `@slicemachine/manager`'s
+		// `SliceManager.prototype.uploadScreenshot` method.
+		//
+		// Since tokens are secret, this package should only be used on
+		// the server, or in very specific browser-side cases.
+		//
+		// We don't necessarily need to use Node.js-only packages, but
+		// we shouldn't be worried too much about installing larger
+		// packages.
+	}
+
+	private async fetchScreenshotACL(): Promise<ScreenshotACL> {
+		if (
+			this.screenshotACL &&
+			this.screenshotACLExpiresAt &&
+			this.screenshotACLExpiresAt < Date.now()
+		) {
+			return this.screenshotACL;
+		}
+
+		const url = new URL("./create", this.screenshotACLEndpoint);
+		const res = await this.fetchFn(url.toString(), {
+			...this.fetchOptions,
+			headers: {
+				Authorization: `Bearer ${this.token}`,
+				Repository: this.repositoryName,
+				...this.fetchOptions?.headers,
+			},
+		});
+
+		let json: ScreenshotACLResponse;
+		try {
+			json = await res.json();
+		} catch (error) {
+			// Response is not JSON
+			throw new Error(`Invalid ACL response from ${url}.`, { cause: error });
+		}
+
+		if ("values" in json) {
+			const acl = {
+				uploadEndpoint: json.values.url,
+				imgixEndpoint: json.imgixEndpoint,
+				formDataFields: json.values.fields,
+			};
+
+			this.screenshotACL = acl;
+			this.screenshotACLExpiresAt = Date.now() + SCREENSHOT_ACL_TTL;
+
+			return acl;
+		}
+
+		if ("error" in json || "message" in json || "Message" in json) {
+			const errorMessage = json.error || json.message || json.Message;
+
+			throw new Error(`Failed to create an AWS ACL: ${errorMessage}`);
+		}
+
+		throw new Error(`Invalid ACL response from ${url}.`);
 	}
 
 	/**

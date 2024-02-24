@@ -64,3 +64,17 @@ export interface ResponseLike {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	text(): Promise<any>;
 }
+
+export type ScreenshotACLResponse =
+	| {
+			values: {
+				url: string;
+				fields: Record<string, string>;
+			};
+			imgixEndpoint: string;
+	  }
+	| {
+			message?: string;
+			Message?: string;
+			error?: string;
+	  };
