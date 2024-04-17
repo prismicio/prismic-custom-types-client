@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/prismicio/prismic-custom-types-client/compare/v1.3.0...v1.3.1) (2024-04-17)
+
+
+### Bug Fixes
+
+* make `@prismicio/client` a peer dependency ([#14](https://github.com/prismicio/prismic-custom-types-client/issues/14)) ([99d2b67](https://github.com/prismicio/prismic-custom-types-client/commit/99d2b675f7e974cff7ad1ea74f8f4f3c37884e98))
+
 ## [1.3.0](https://github.com/prismicio/prismic-custom-types-client/compare/v1.2.0...v1.3.0) (2024-01-27)
 
 
