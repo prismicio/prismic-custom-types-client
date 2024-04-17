@@ -17,7 +17,7 @@ JavaScript client to interact with the [Prismic Custom Types API][prismic-custom
 ## Install
 
 ```bash
-npm install @prismicio/custom-types-client
+npm install @prismicio/custom-types-client @prismicio/client
 ```
 
 ## Documentation
