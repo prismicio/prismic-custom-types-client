@@ -6,10 +6,10 @@ import {
 	BulkUpdateHasExistingDocumentsError,
 	ConflictError,
 	ForbiddenError,
+	InvalidAPIResponse,
 	InvalidPayloadError,
 	MissingFetchError,
 	NotFoundError,
-	PrismicError,
 	UnauthorizedError,
 } from "./errors";
 
@@ -608,6 +608,8 @@ export class CustomTypesClient {
 			}
 		}
 
-		throw new PrismicError("An invalid API response was returned", { url });
+		throw new InvalidAPIResponse("An invalid API response was returned", {
+			url,
+		});
 	}
 }

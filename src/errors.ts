@@ -73,6 +73,11 @@ type BulkUpdateTransactionErrorAPIResponse = {
 };
 
 /**
+ * Represents an error when the Prismic Custom Types API response is invalid.
+ */
+export class InvalidAPIResponse extends PrismicError {}
+
+/**
  * Represents an error when making an unauthorized Prismic Custom Types API
  * request.
  */

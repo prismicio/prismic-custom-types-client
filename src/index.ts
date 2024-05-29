@@ -15,13 +15,15 @@ export type {
 } from "./bulkUpdate";
 
 export {
-	PrismicError,
+	BulkUpdateHasExistingDocumentsError,
 	ConflictError,
 	ForbiddenError,
-	UnauthorizedError,
+	InvalidAPIResponse,
 	InvalidPayloadError,
 	MissingFetchError,
 	NotFoundError,
+	PrismicError,
+	UnauthorizedError,
 } from "./errors";
 
 export type { FetchLike, ResponseLike, RequestInitLike } from "./types";
