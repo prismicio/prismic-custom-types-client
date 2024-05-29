@@ -2,26 +2,26 @@ import { expect } from "vitest";
 
 import { it } from "./__testutils__/it";
 
-import { createBulkTransaction } from "../src";
+import { createBulkUpdateTransaction } from "../src";
 
 it("starts with an empty array of operations", () => {
-	const bulkTransaction = createBulkTransaction();
+	const bulkUpdateTransaction = createBulkUpdateTransaction();
 
-	expect(bulkTransaction.operations).toStrictEqual([]);
+	expect(bulkUpdateTransaction.operations).toStrictEqual([]);
 });
 
 it("supports custom type operations", ({ mock }) => {
-	const bulkTransaction = createBulkTransaction();
+	const bulkUpdateTransaction = createBulkUpdateTransaction();
 
 	const insertedCustomType = mock.model.customType();
 	const updatedCustomType = mock.model.customType();
 	const deletedCustomType = mock.model.customType();
 
-	bulkTransaction.insertCustomType(insertedCustomType);
-	bulkTransaction.updateCustomType(updatedCustomType);
-	bulkTransaction.deleteCustomType(deletedCustomType);
+	bulkUpdateTransaction.insertCustomType(insertedCustomType);
+	bulkUpdateTransaction.updateCustomType(updatedCustomType);
+	bulkUpdateTransaction.deleteCustomType(deletedCustomType);
 
-	expect(bulkTransaction.operations).toStrictEqual([
+	expect(bulkUpdateTransaction.operations).toStrictEqual([
 		{
 			type: "CUSTOM_TYPE_INSERT",
 			id: insertedCustomType.id,
@@ -41,17 +41,17 @@ it("supports custom type operations", ({ mock }) => {
 });
 
 it("supports slice operations", ({ mock }) => {
-	const bulkTransaction = createBulkTransaction();
+	const bulkUpdateTransaction = createBulkUpdateTransaction();
 
 	const insertedSlice = mock.model.sharedSlice();
 	const updatedSlice = mock.model.sharedSlice();
 	const deletedSlice = mock.model.sharedSlice();
 
-	bulkTransaction.insertSlice(insertedSlice);
-	bulkTransaction.updateSlice(updatedSlice);
-	bulkTransaction.deleteSlice(deletedSlice);
+	bulkUpdateTransaction.insertSlice(insertedSlice);
+	bulkUpdateTransaction.updateSlice(updatedSlice);
+	bulkUpdateTransaction.deleteSlice(deletedSlice);
 
-	expect(bulkTransaction.operations).toStrictEqual([
+	expect(bulkUpdateTransaction.operations).toStrictEqual([
 		{
 			type: "SLICE_INSERT",
 			id: insertedSlice.id,
@@ -75,14 +75,16 @@ it("supports initial operations", ({ mock }) => {
 	const updatedCustomType = mock.model.customType();
 	const deletedCustomType = mock.model.customType();
 
-	const bulkTransaction1 = createBulkTransaction();
-	bulkTransaction1.insertCustomType(insertedCustomType);
+	const bulkUpdateTransaction1 = createBulkUpdateTransaction();
+	bulkUpdateTransaction1.insertCustomType(insertedCustomType);
 
-	const bulkTransaction2 = createBulkTransaction(bulkTransaction1.operations);
-	bulkTransaction2.updateCustomType(updatedCustomType);
-	bulkTransaction2.deleteCustomType(deletedCustomType);
+	const bulkUpdateTransaction2 = createBulkUpdateTransaction(
+		bulkUpdateTransaction1.operations,
+	);
+	bulkUpdateTransaction2.updateCustomType(updatedCustomType);
+	bulkUpdateTransaction2.deleteCustomType(deletedCustomType);
 
-	expect(bulkTransaction2.operations).toStrictEqual([
+	expect(bulkUpdateTransaction2.operations).toStrictEqual([
 		{
 			type: "CUSTOM_TYPE_INSERT",
 			id: insertedCustomType.id,
@@ -101,19 +103,21 @@ it("supports initial operations", ({ mock }) => {
 	]);
 });
 
-it("supports initial BulkTransaction", ({ mock }) => {
+it("supports initial BulkUpdateTransaction", ({ mock }) => {
 	const insertedCustomType = mock.model.customType();
 	const updatedCustomType = mock.model.customType();
 	const deletedCustomType = mock.model.customType();
 
-	const bulkTransaction1 = createBulkTransaction();
-	bulkTransaction1.insertCustomType(insertedCustomType);
+	const bulkUpdateTransaction1 = createBulkUpdateTransaction();
+	bulkUpdateTransaction1.insertCustomType(insertedCustomType);
 
-	const bulkTransaction2 = createBulkTransaction(bulkTransaction1);
-	bulkTransaction2.updateCustomType(updatedCustomType);
-	bulkTransaction2.deleteCustomType(deletedCustomType);
+	const bulkUpdateTransaction2 = createBulkUpdateTransaction(
+		bulkUpdateTransaction1,
+	);
+	bulkUpdateTransaction2.updateCustomType(updatedCustomType);
+	bulkUpdateTransaction2.deleteCustomType(deletedCustomType);
 
-	expect(bulkTransaction2.operations).toStrictEqual([
+	expect(bulkUpdateTransaction2.operations).toStrictEqual([
 		{
 			type: "CUSTOM_TYPE_INSERT",
 			id: insertedCustomType.id,
