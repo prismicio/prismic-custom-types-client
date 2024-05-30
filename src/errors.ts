@@ -59,7 +59,7 @@ export interface ForbiddenErrorAPIResponse {
  * endpoint when changes contain a deletion operation of custom type(s) with
  * existing document(s).
  */
-type BulkUpdateTransactionErrorAPIResponse = {
+type BulkUpdateHasExistingDocumentsErrorAPIResponse = {
 	/**
 	 * Description of the error.
 	 */
@@ -107,7 +107,7 @@ export class InvalidPayloadError extends PrismicError<string> {}
  * Represents an error when a bulk update changes contain a deletion operation
  * of custom type(s) with existing document(s).
  */
-export class BulkUpdateHasExistingDocumentsError extends PrismicError<BulkUpdateTransactionErrorAPIResponse> {}
+export class BulkUpdateHasExistingDocumentsError extends PrismicError<BulkUpdateHasExistingDocumentsErrorAPIResponse> {}
 
 /**
  * Represents an error when a valid `fetch` function is not available to the
