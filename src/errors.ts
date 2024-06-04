@@ -45,7 +45,7 @@ export class PrismicError<TResponse = never> extends Error {
 }
 
 /**
- * The response returned by the Prismic Custom Types API when unauthorized.
+ * The response returned by the Prismic Custom Types API when forbidden.
  */
 export interface ForbiddenErrorAPIResponse {
 	/**
@@ -55,18 +55,27 @@ export interface ForbiddenErrorAPIResponse {
 }
 
 /**
- * The response returned by the Prismic Custom Types API bulk transaction
- * endpoint when a soft or hard limit is reached.
+ * The response returned by the Prismic Custom Types API bulk update transaction
+ * endpoint when changes contain a deletion operation of custom type(s) with
+ * existing document(s).
  */
-type BulkTransactionErrorAPIResponse = {
-	details: {
-		customTypes: {
-			id: string;
-			numberOfDocuments: number;
-			url: string;
-		}[];
-	};
+type BulkUpdateHasExistingDocumentsErrorAPIResponse = {
+	/**
+	 * Description of the error.
+	 */
+	message: string;
+
+	/**
+	 * Identify if the changes contain a deletion operation of custom type(s) with
+	 * existing document(s).
+	 */
+	hasExistingDocuments: true;
 };
+
+/**
+ * Represents an error when the Prismic Custom Types API response is invalid.
+ */
+export class InvalidAPIResponse extends PrismicError {}
 
 /**
  * Represents an error when making an unauthorized Prismic Custom Types API
@@ -95,16 +104,10 @@ export class NotFoundError extends PrismicError {}
 export class InvalidPayloadError extends PrismicError<string> {}
 
 /**
- * Represents an error when a bulk transaction requires confirmation to delete
- * documents.
+ * Represents an error when a bulk update changes contain a deletion operation
+ * of custom type(s) with existing document(s).
  */
-export class BulkTransactionConfirmationError extends PrismicError<BulkTransactionErrorAPIResponse> {}
-
-/**
- * Represents an error when a bulk transaction reached the limit of operations
- * allowed by the API.
- */
-export class BulkTransactionLimitError extends PrismicError<BulkTransactionErrorAPIResponse> {}
+export class BulkUpdateHasExistingDocumentsError extends PrismicError<BulkUpdateHasExistingDocumentsErrorAPIResponse> {}
 
 /**
  * Represents an error when a valid `fetch` function is not available to the

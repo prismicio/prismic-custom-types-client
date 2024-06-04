@@ -3,18 +3,17 @@ import type * as prismic from "@prismicio/client";
 import type { AbortSignalLike, FetchLike, RequestInitLike } from "./types";
 
 import {
-	BulkTransactionConfirmationError,
-	BulkTransactionLimitError,
+	BulkUpdateHasExistingDocumentsError,
 	ConflictError,
 	ForbiddenError,
+	InvalidAPIResponse,
 	InvalidPayloadError,
 	MissingFetchError,
 	NotFoundError,
-	PrismicError,
 	UnauthorizedError,
 } from "./errors";
 
-import { BulkOperation, BulkTransaction } from "./bulk";
+import { BulkUpdateOperation, BulkUpdateTransaction } from "./bulkUpdate";
 
 /**
  * The default endpoint for the Prismic Custom Types API.
@@ -52,7 +51,8 @@ export type CustomTypesClientConfig = {
 	/**
 	 * Options provided to the client's `fetch()` on all network requests. These
 	 * options will be merged with internally required options. They can also be
-	 * overriden on a per-query basis using the query's `fetchOptions` parameter.
+	 * overridden on a per-query basis using the query's `fetchOptions`
+	 * parameter.
 	 */
 	fetchOptions?: RequestInitLike;
 };
@@ -83,19 +83,6 @@ type FetchParams = {
 	 * {@link https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal}
 	 */
 	signal?: AbortSignalLike;
-};
-
-/**
- * Parameters for the `bulk()` client method.
- */
-type BulkParams = {
-	/**
-	 * Determines if the method stops a bulk request if the changes require
-	 * deleting Prismic documents.
-	 *
-	 * @defaultValue false
-	 */
-	deleteDocuments?: boolean;
 };
 
 /**
@@ -454,34 +441,33 @@ export class CustomTypesClient {
 	 * @example
 	 *
 	 * ```ts
-	 * const bulkTransaction = createBulkTransaction();
-	 * bulkTransaction.insertCustomType(myCustomType);
-	 * bulkTransaction.deleteSlice(mySlice);
+	 * const bulkUpdateTransaction = createBulkUpdateTransaction();
+	 * bulkUpdateTransaction.insertCustomType(myCustomType);
+	 * bulkUpdateTransaction.deleteSlice(mySlice);
 	 *
-	 * await client.bulk(bulkTransaction);
+	 * await client.bulkUpdate(bulkUpdateTransaction);
 	 * ```
 	 *
-	 * @param operations - A `BulkTransaction` containing all operations or an
-	 *   array of objects describing an operation.
+	 * @param operations - A `BulkUpdateTransaction` containing all operations or
+	 *   an array of objects describing an operation.
 	 * @param params - Parameters that determine how the method behaves and for
 	 *   overriding the client's default configuration.
 	 *
 	 * @returns An array of objects describing the operations.
 	 */
-	async bulk(
-		operations: BulkTransaction | BulkOperation[],
-		params?: BulkParams & CustomTypesClientMethodParams & FetchParams,
-	): Promise<BulkOperation[]> {
+	async bulkUpdate(
+		operations: BulkUpdateTransaction | BulkUpdateOperation[],
+		params?: CustomTypesClientMethodParams & FetchParams,
+	): Promise<BulkUpdateOperation[]> {
 		const resolvedOperations =
-			operations instanceof BulkTransaction
+			operations instanceof BulkUpdateTransaction
 				? operations.operations
 				: operations;
 
 		await this.fetch(
-			"./bulk",
+			"./bulk-update",
 			params,
 			createPostFetchRequestInit({
-				confirmDeleteDocuments: params?.deleteDocuments ?? false,
 				changes: resolvedOperations,
 			}),
 		);
@@ -564,17 +550,6 @@ export class CustomTypesClient {
 				return undefined as any;
 			}
 
-			// Accepted
-			// - Soft limit reached for bulk request (requires confirmation)
-			case 202: {
-				const json = await res.json();
-
-				throw new BulkTransactionConfirmationError(
-					"The bulk transaction will delete documents. Confirm before trying again.",
-					{ url, response: json },
-				);
-			}
-
 			// Bad Request
 			// - Invalid body sent
 			case 400: {
@@ -594,13 +569,13 @@ export class CustomTypesClient {
 			// Forbidden
 			// - Missing token
 			// - Incorrect token
-			// - Hard limit reached for bulk request (cannot process)
+			// - Has existing documents (cannot process)
 			case 403: {
 				const json = await res.json();
 
-				if ("details" in json) {
-					throw new BulkTransactionLimitError(
-						"The bulk transaction reached or surpassed the limit of allowed commands.",
+				if ("hasExistingDocuments" in json && json.hasExistingDocuments) {
+					throw new BulkUpdateHasExistingDocumentsError(
+						"A custom type with published documents cannot be deleted. Delete all of the custom type's documents or remove the delete operation from the request before trying again.",
 						{ url, response: json },
 					);
 				}
@@ -633,6 +608,8 @@ export class CustomTypesClient {
 			}
 		}
 
-		throw new PrismicError("An invalid API response was returned", { url });
+		throw new InvalidAPIResponse("An invalid API response was returned", {
+			url,
+		});
 	}
 }

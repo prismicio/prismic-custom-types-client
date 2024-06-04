@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-alpha.1](https://github.com/prismicio/prismic-custom-types-client/compare/v2.0.0-alpha.0...v2.0.0-alpha.1) (2024-05-29)
+
+## [2.0.0-alpha.0](https://github.com/prismicio/prismic-custom-types-client/compare/v1.1.0...v2.0.0-alpha.0) (2024-05-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **bulk-update:** drop support for bulk endpoint
+
+### Features
+
+* **bulk-update:** replace bulk by bulk-update endpoint ([abfcd13](https://github.com/prismicio/prismic-custom-types-client/commit/abfcd13b672d6bef7f119af2435db49373886741))
+* pass arbitrary options to `fetch()` with the `fetchOptions` parameter ([#9](https://github.com/prismicio/prismic-custom-types-client/issues/9)) ([ae76fe8](https://github.com/prismicio/prismic-custom-types-client/commit/ae76fe8e6fcd84f2e79745e57f687625325d0a94))
+* support bulk transactions ([#10](https://github.com/prismicio/prismic-custom-types-client/issues/10)) ([38968f7](https://github.com/prismicio/prismic-custom-types-client/commit/38968f779b00ce8d62495438c14b87b2fe3c8f13))
+
+
+### Bug Fixes
+
+* make `@prismicio/client` a peer dependency ([#14](https://github.com/prismicio/prismic-custom-types-client/issues/14)) ([99d2b67](https://github.com/prismicio/prismic-custom-types-client/commit/99d2b675f7e974cff7ad1ea74f8f4f3c37884e98))
+* replace `@prismicio/types` with `@prismicio/client` ([#11](https://github.com/prismicio/prismic-custom-types-client/issues/11)) ([77474e6](https://github.com/prismicio/prismic-custom-types-client/commit/77474e63f6907639f3f3ed8c7a9cee80116e8692))
+
+
+### Chore
+
+* **deps:** update all dependencies ([#12](https://github.com/prismicio/prismic-custom-types-client/issues/12)) ([2c5330e](https://github.com/prismicio/prismic-custom-types-client/commit/2c5330e41c921f7d536db4a84c021ffd4776ed74))
+* **release:** 1.2.0 ([c662c3f](https://github.com/prismicio/prismic-custom-types-client/commit/c662c3f57464653e654ae4e48d6506b6c44ba6c0))
+* **release:** 1.3.0 ([bd7f977](https://github.com/prismicio/prismic-custom-types-client/commit/bd7f9774e505e39262ab030e66213d88341f19cd))
+* **release:** 1.3.1 ([1fff28f](https://github.com/prismicio/prismic-custom-types-client/commit/1fff28fc39e40c672f8002fbcb00af8792f331b3))
+* **releases:** release alpha as major ([82948fb](https://github.com/prismicio/prismic-custom-types-client/commit/82948fbc887e246244718b37f0d0e230ca5db827))
+
 ### [1.3.1](https://github.com/prismicio/prismic-custom-types-client/compare/v1.3.0...v1.3.1) (2024-04-17)
 
 

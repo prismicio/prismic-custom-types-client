@@ -5,22 +5,25 @@ export type {
 } from "./client";
 
 export {
-	createBulkTransaction,
-	BulkTransaction,
-	BulkOperationType,
-} from "./bulk";
-export type { BulkOperation, BulkTransactionModels } from "./bulk";
+	createBulkUpdateTransaction,
+	BulkUpdateTransaction,
+	BulkUpdateOperationType,
+} from "./bulkUpdate";
+export type {
+	BulkUpdateOperation,
+	BulkUpdateTransactionModels,
+} from "./bulkUpdate";
 
 export {
-	PrismicError,
+	BulkUpdateHasExistingDocumentsError,
 	ConflictError,
 	ForbiddenError,
-	UnauthorizedError,
+	InvalidAPIResponse,
 	InvalidPayloadError,
 	MissingFetchError,
 	NotFoundError,
-	BulkTransactionLimitError,
-	BulkTransactionConfirmationError,
+	PrismicError,
+	UnauthorizedError,
 } from "./errors";
 
 export type { FetchLike, ResponseLike, RequestInitLike } from "./types";

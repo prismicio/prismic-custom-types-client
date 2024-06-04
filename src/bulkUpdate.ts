@@ -3,7 +3,7 @@ import * as prismic from "@prismicio/client";
 /**
  * The type of a bulk operation.
  */
-export const BulkOperationType = {
+export const BulkUpdateOperationType = {
 	CustomTypeInsert: "CUSTOM_TYPE_INSERT",
 	CustomTypeUpdate: "CUSTOM_TYPE_UPDATE",
 	CustomTypeDelete: "CUSTOM_TYPE_DELETE",
@@ -11,45 +11,45 @@ export const BulkOperationType = {
 	SliceUpdate: "SLICE_UPDATE",
 	SliceDelete: "SLICE_DELETE",
 } as const;
-export type BulkOperationType =
-	(typeof BulkOperationType)[keyof typeof BulkOperationType];
+export type BulkUpdateOperationType =
+	(typeof BulkUpdateOperationType)[keyof typeof BulkUpdateOperationType];
 
 /**
- * An object describing a bulk operation.
+ * An object describing a bulk update operation.
  */
-export type BulkOperation =
+export type BulkUpdateOperation =
 	| {
-			type: typeof BulkOperationType.CustomTypeInsert;
+			type: typeof BulkUpdateOperationType.CustomTypeInsert;
 			id: string;
 			payload: prismic.CustomTypeModel;
 	  }
 	| {
-			type: typeof BulkOperationType.CustomTypeUpdate;
+			type: typeof BulkUpdateOperationType.CustomTypeUpdate;
 			id: string;
 			payload: prismic.CustomTypeModel;
 	  }
 	| {
-			type: typeof BulkOperationType.CustomTypeDelete;
+			type: typeof BulkUpdateOperationType.CustomTypeDelete;
 			id: string;
 			payload: Pick<prismic.CustomTypeModel, "id">;
 	  }
 	| {
-			type: typeof BulkOperationType.SliceInsert;
+			type: typeof BulkUpdateOperationType.SliceInsert;
 			id: string;
 			payload: prismic.SharedSliceModel;
 	  }
 	| {
-			type: typeof BulkOperationType.SliceUpdate;
+			type: typeof BulkUpdateOperationType.SliceUpdate;
 			id: string;
 			payload: prismic.SharedSliceModel;
 	  }
 	| {
-			type: typeof BulkOperationType.SliceDelete;
+			type: typeof BulkUpdateOperationType.SliceDelete;
 			id: string;
 			payload: Pick<prismic.SharedSliceModel, "id">;
 	  };
 
-export type BulkTransactionModels = {
+export type BulkUpdateTransactionModels = {
 	customTypes?: prismic.CustomTypeModel[];
 	slices?: prismic.SharedSliceModel[];
 };
@@ -85,24 +85,29 @@ const processDiff = <
 };
 
 /**
- * Create a bulk transaction instance to pass to a Custom Types Client `bulk()`
- * method.
+ * Create a bulk update transaction instance to pass to a Custom Types Client
+ * `bulkUpdate()` method.
  */
-export const createBulkTransaction = (
-	...args: ConstructorParameters<typeof BulkTransaction>
-): BulkTransaction => new BulkTransaction(...args);
+export const createBulkUpdateTransaction = (
+	...args: ConstructorParameters<typeof BulkUpdateTransaction>
+): BulkUpdateTransaction => new BulkUpdateTransaction(...args);
 
-export class BulkTransaction {
-	operations: BulkOperation[];
+export class BulkUpdateTransaction {
+	operations: BulkUpdateOperation[];
 
-	constructor(initialOperations: BulkTransaction | BulkOperation[] = []) {
+	constructor(
+		initialOperations: BulkUpdateTransaction | BulkUpdateOperation[] = [],
+	) {
 		this.operations =
-			initialOperations instanceof BulkTransaction
+			initialOperations instanceof BulkUpdateTransaction
 				? initialOperations.operations
 				: initialOperations;
 	}
 
-	fromDiff(before: BulkTransactionModels, after: BulkTransactionModels): void {
+	fromDiff(
+		before: BulkUpdateTransactionModels,
+		after: BulkUpdateTransactionModels,
+	): void {
 		processDiff(before.customTypes ?? [], after.customTypes ?? [], {
 			onInsert: (model) => this.insertCustomType(model),
 			onUpdate: (model) => this.updateCustomType(model),
@@ -117,7 +122,7 @@ export class BulkTransaction {
 
 	insertCustomType(customType: prismic.CustomTypeModel): void {
 		this.operations.push({
-			type: BulkOperationType.CustomTypeInsert,
+			type: BulkUpdateOperationType.CustomTypeInsert,
 			id: customType.id,
 			payload: customType,
 		});
@@ -125,7 +130,7 @@ export class BulkTransaction {
 
 	updateCustomType(customType: prismic.CustomTypeModel): void {
 		this.operations.push({
-			type: BulkOperationType.CustomTypeUpdate,
+			type: BulkUpdateOperationType.CustomTypeUpdate,
 			id: customType.id,
 			payload: customType,
 		});
@@ -133,7 +138,7 @@ export class BulkTransaction {
 
 	deleteCustomType(customType: prismic.CustomTypeModel): void {
 		this.operations.push({
-			type: BulkOperationType.CustomTypeDelete,
+			type: BulkUpdateOperationType.CustomTypeDelete,
 			id: customType.id,
 			payload: { id: customType.id },
 		});
@@ -141,7 +146,7 @@ export class BulkTransaction {
 
 	insertSlice(slice: prismic.SharedSliceModel): void {
 		this.operations.push({
-			type: BulkOperationType.SliceInsert,
+			type: BulkUpdateOperationType.SliceInsert,
 			id: slice.id,
 			payload: slice,
 		});
@@ -149,7 +154,7 @@ export class BulkTransaction {
 
 	updateSlice(slice: prismic.SharedSliceModel): void {
 		this.operations.push({
-			type: BulkOperationType.SliceUpdate,
+			type: BulkUpdateOperationType.SliceUpdate,
 			id: slice.id,
 			payload: slice,
 		});
@@ -157,7 +162,7 @@ export class BulkTransaction {
 
 	deleteSlice(slice: prismic.SharedSliceModel): void {
 		this.operations.push({
-			type: BulkOperationType.SliceDelete,
+			type: BulkUpdateOperationType.SliceDelete,
 			id: slice.id,
 			payload: { id: slice.id },
 		});
