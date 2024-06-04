@@ -575,7 +575,7 @@ export class CustomTypesClient {
 
 				if ("hasExistingDocuments" in json && json.hasExistingDocuments) {
 					throw new BulkUpdateHasExistingDocumentsError(
-						"The bulk update changes contain deletion operations for custom types with existing documents.",
+						"A custom type with published documents cannot be deleted. Delete all of the custom type's documents or remove the delete operation from the request before trying again.",
 						{ url, response: json },
 					);
 				}
