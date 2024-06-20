@@ -1,6 +1,6 @@
 {
 	"name": "@prismicio/custom-types-client",
-	"version": "2.0.0",
+	"version": "2.1.0-alpha.0",
 	"description": "JavaScript client to interact with the Prismic Custom Types API",
 	"keywords": [
 		"typescript",
@@ -34,8 +34,8 @@
 		"lint": "eslint --ext .js,.ts .",
 		"prepare": "npm run build",
 		"release": "npm run test && standard-version && git push --follow-tags && npm run build && npm publish",
-		"release:alpha": "npm run test && standard-version --release-as major --prerelease alpha && git push --follow-tags && npm run build && npm publish --tag alpha",
-		"release:alpha:dry": "standard-version --release-as major --prerelease alpha --dry-run",
+		"release:alpha": "npm run test && standard-version --prerelease alpha && git push --follow-tags && npm run build && npm publish --tag alpha",
+		"release:alpha:dry": "standard-version --prerelease alpha --dry-run",
 		"release:dry": "standard-version --dry-run",
 		"size": "size-limit",
 		"test": "npm run lint && npm run types && npm run unit && npm run build && npm run size",
@@ -44,7 +44,7 @@
 		"unit:watch": "vitest watch"
 	},
 	"devDependencies": {
-		"@prismicio/mock": "^0.3.1",
+		"@prismicio/mock": "^0.3.7",
 		"@size-limit/preset-small-lib": "^11.0.2",
 		"@trivago/prettier-plugin-sort-imports": "^4.3.0",
 		"@types/node": "^20.11.7",
