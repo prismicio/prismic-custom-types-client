@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/prismicio/prismic-custom-types-client/compare/v2.0.0...v2.1.0) (2024-06-20)
+
+
+### Features
+
+* support groups in groups ([#16](https://github.com/prismicio/prismic-custom-types-client/issues/16)) ([a215f71](https://github.com/prismicio/prismic-custom-types-client/commit/a215f7199571264d22ca1c2e17d8aeb57382688b))
+
+
+### Documentation
+
+* update `CONTRIBUTING.md` ([#17](https://github.com/prismicio/prismic-custom-types-client/issues/17)) ([c99d467](https://github.com/prismicio/prismic-custom-types-client/commit/c99d467c9738f8b87ac76f48ac76a179b9184bc1))
+
 ## [2.1.0-alpha.0](https://github.com/prismicio/prismic-custom-types-client/compare/v2.0.0...v2.1.0-alpha.0) (2024-06-06)
 
 
