@@ -1,25 +1,24 @@
-import { expect } from "vitest";
+import { expect } from "vitest"
 
-import { it } from "./__testutils__/it";
-
-import { createBulkUpdateTransaction } from "../src";
+import { createBulkUpdateTransaction } from "../src"
+import { it } from "./__testutils__/it"
 
 it("starts with an empty array of operations", () => {
-	const bulkUpdateTransaction = createBulkUpdateTransaction();
+	const bulkUpdateTransaction = createBulkUpdateTransaction()
 
-	expect(bulkUpdateTransaction.operations).toStrictEqual([]);
-});
+	expect(bulkUpdateTransaction.operations).toStrictEqual([])
+})
 
 it("supports custom type operations", ({ mock }) => {
-	const bulkUpdateTransaction = createBulkUpdateTransaction();
+	const bulkUpdateTransaction = createBulkUpdateTransaction()
 
-	const insertedCustomType = mock.model.customType();
-	const updatedCustomType = mock.model.customType();
-	const deletedCustomType = mock.model.customType();
+	const insertedCustomType = mock.model.customType()
+	const updatedCustomType = mock.model.customType()
+	const deletedCustomType = mock.model.customType()
 
-	bulkUpdateTransaction.insertCustomType(insertedCustomType);
-	bulkUpdateTransaction.updateCustomType(updatedCustomType);
-	bulkUpdateTransaction.deleteCustomType(deletedCustomType);
+	bulkUpdateTransaction.insertCustomType(insertedCustomType)
+	bulkUpdateTransaction.updateCustomType(updatedCustomType)
+	bulkUpdateTransaction.deleteCustomType(deletedCustomType)
 
 	expect(bulkUpdateTransaction.operations).toStrictEqual([
 		{
@@ -37,19 +36,19 @@ it("supports custom type operations", ({ mock }) => {
 			id: deletedCustomType.id,
 			payload: { id: deletedCustomType.id },
 		},
-	]);
-});
+	])
+})
 
 it("supports slice operations", ({ mock }) => {
-	const bulkUpdateTransaction = createBulkUpdateTransaction();
+	const bulkUpdateTransaction = createBulkUpdateTransaction()
 
-	const insertedSlice = mock.model.sharedSlice();
-	const updatedSlice = mock.model.sharedSlice();
-	const deletedSlice = mock.model.sharedSlice();
+	const insertedSlice = mock.model.sharedSlice()
+	const updatedSlice = mock.model.sharedSlice()
+	const deletedSlice = mock.model.sharedSlice()
 
-	bulkUpdateTransaction.insertSlice(insertedSlice);
-	bulkUpdateTransaction.updateSlice(updatedSlice);
-	bulkUpdateTransaction.deleteSlice(deletedSlice);
+	bulkUpdateTransaction.insertSlice(insertedSlice)
+	bulkUpdateTransaction.updateSlice(updatedSlice)
+	bulkUpdateTransaction.deleteSlice(deletedSlice)
 
 	expect(bulkUpdateTransaction.operations).toStrictEqual([
 		{
@@ -67,22 +66,20 @@ it("supports slice operations", ({ mock }) => {
 			id: deletedSlice.id,
 			payload: { id: deletedSlice.id },
 		},
-	]);
-});
+	])
+})
 
 it("supports initial operations", ({ mock }) => {
-	const insertedCustomType = mock.model.customType();
-	const updatedCustomType = mock.model.customType();
-	const deletedCustomType = mock.model.customType();
+	const insertedCustomType = mock.model.customType()
+	const updatedCustomType = mock.model.customType()
+	const deletedCustomType = mock.model.customType()
 
-	const bulkUpdateTransaction1 = createBulkUpdateTransaction();
-	bulkUpdateTransaction1.insertCustomType(insertedCustomType);
+	const bulkUpdateTransaction1 = createBulkUpdateTransaction()
+	bulkUpdateTransaction1.insertCustomType(insertedCustomType)
 
-	const bulkUpdateTransaction2 = createBulkUpdateTransaction(
-		bulkUpdateTransaction1.operations,
-	);
-	bulkUpdateTransaction2.updateCustomType(updatedCustomType);
-	bulkUpdateTransaction2.deleteCustomType(deletedCustomType);
+	const bulkUpdateTransaction2 = createBulkUpdateTransaction(bulkUpdateTransaction1.operations)
+	bulkUpdateTransaction2.updateCustomType(updatedCustomType)
+	bulkUpdateTransaction2.deleteCustomType(deletedCustomType)
 
 	expect(bulkUpdateTransaction2.operations).toStrictEqual([
 		{
@@ -100,22 +97,20 @@ it("supports initial operations", ({ mock }) => {
 			id: deletedCustomType.id,
 			payload: { id: deletedCustomType.id },
 		},
-	]);
-});
+	])
+})
 
 it("supports initial BulkUpdateTransaction", ({ mock }) => {
-	const insertedCustomType = mock.model.customType();
-	const updatedCustomType = mock.model.customType();
-	const deletedCustomType = mock.model.customType();
+	const insertedCustomType = mock.model.customType()
+	const updatedCustomType = mock.model.customType()
+	const deletedCustomType = mock.model.customType()
 
-	const bulkUpdateTransaction1 = createBulkUpdateTransaction();
-	bulkUpdateTransaction1.insertCustomType(insertedCustomType);
+	const bulkUpdateTransaction1 = createBulkUpdateTransaction()
+	bulkUpdateTransaction1.insertCustomType(insertedCustomType)
 
-	const bulkUpdateTransaction2 = createBulkUpdateTransaction(
-		bulkUpdateTransaction1,
-	);
-	bulkUpdateTransaction2.updateCustomType(updatedCustomType);
-	bulkUpdateTransaction2.deleteCustomType(deletedCustomType);
+	const bulkUpdateTransaction2 = createBulkUpdateTransaction(bulkUpdateTransaction1)
+	bulkUpdateTransaction2.updateCustomType(updatedCustomType)
+	bulkUpdateTransaction2.deleteCustomType(deletedCustomType)
 
 	expect(bulkUpdateTransaction2.operations).toStrictEqual([
 		{
@@ -133,5 +128,5 @@ it("supports initial BulkUpdateTransaction", ({ mock }) => {
 			id: deletedCustomType.id,
 			payload: { id: deletedCustomType.id },
 		},
-	]);
-});
+	])
+})

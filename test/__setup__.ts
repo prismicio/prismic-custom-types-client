@@ -1,11 +1,11 @@
-import { afterAll, beforeAll } from "vitest";
+import { afterAll, beforeAll } from "vitest"
 
-import { server } from "./__testutils__/server";
+import { server } from "./__testutils__/server"
 
 beforeAll(() => {
-	server.listen({ onUnhandledRequest: "error" });
-});
+	server.listen({ onUnhandledRequest: "error" })
+})
 
 afterAll(() => {
-	server.close();
-});
+	server.close()
+})

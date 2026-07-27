@@ -80,8 +80,8 @@ limitations under the License.
 [npm-version-href]: https://npmjs.com/package/@prismicio/custom-types-client
 [npm-downloads-src]: https://img.shields.io/npm/dm/@prismicio/custom-types-client.svg
 [npm-downloads-href]: https://npmjs.com/package/@prismicio/custom-types-client
-[github-actions-ci-src]: https://github.com/prismicio/prismic-custom-types-client/workflows/ci/badge.svg
-[github-actions-ci-href]: https://github.com/prismicio/prismic-custom-types-client/actions?query=workflow%3Aci
+[github-actions-ci-src]: https://github.com/prismicio/prismic-custom-types-client/workflows/validate/badge.svg
+[github-actions-ci-href]: https://github.com/prismicio/prismic-custom-types-client/actions?query=workflow%3Avalidate
 [codecov-src]: https://img.shields.io/codecov/c/github/prismicio/prismic-custom-types-client.svg
 [codecov-href]: https://codecov.io/gh/prismicio/prismic-custom-types-client
 [conventional-commits-src]: https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg
