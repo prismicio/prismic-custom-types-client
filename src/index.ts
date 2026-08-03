@@ -1,18 +1,12 @@
-export { createClient, CustomTypesClient } from "./client";
-export type {
-	CustomTypesClientConfig,
-	CustomTypesClientMethodParams,
-} from "./client";
+export { createClient, CustomTypesClient } from "./client"
+export type { CustomTypesClientConfig, CustomTypesClientMethodParams } from "./client"
 
 export {
 	createBulkUpdateTransaction,
 	BulkUpdateTransaction,
 	BulkUpdateOperationType,
-} from "./bulkUpdate";
-export type {
-	BulkUpdateOperation,
-	BulkUpdateTransactionModels,
-} from "./bulkUpdate";
+} from "./bulkUpdate"
+export type { BulkUpdateOperation, BulkUpdateTransactionModels } from "./bulkUpdate"
 
 export {
 	BulkUpdateHasExistingDocumentsError,
@@ -24,6 +18,6 @@ export {
 	NotFoundError,
 	PrismicError,
 	UnauthorizedError,
-} from "./errors";
+} from "./errors"
 
-export type { FetchLike, ResponseLike, RequestInitLike } from "./types";
+export type { FetchLike, ResponseLike, RequestInitLike } from "./types"
