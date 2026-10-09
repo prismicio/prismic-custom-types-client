@@ -279,8 +279,7 @@ export class CustomTypesClient {
 	/**
 	 * Returns all Shared Slice models from the Prismic repository.
 	 *
-	 * @typeParam TSharedSliceModel - The Shared Slice model returned from the
-	 * API.
+	 * @typeParam TSharedSliceModel - The Shared Slice model returned from the API.
 	 * @param params - Parameters to override the client's default configuration.
 	 * @returns All Shared Slice models from the Prismic repository.
 	 * @throws {@link ForbiddenError} Thrown if the client is unauthorized to make
@@ -295,8 +294,7 @@ export class CustomTypesClient {
 	/**
 	 * Returns a Shared Slice model with a given ID from the Prismic repository.
 	 *
-	 * @typeParam TSharedSliceModel - The Shared Slice model returned from the
-	 * API.
+	 * @typeParam TSharedSliceModel - The Shared Slice model returned from the API.
 	 * @param id - ID of the Shared Slice.
 	 * @param params - Parameters to override the client's default configuration.
 	 * @returns The Shared Slice model from the Prismic repository.
