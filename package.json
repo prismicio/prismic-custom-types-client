@@ -57,6 +57,6 @@
 		"@prismicio/client": ">=7"
 	},
 	"engines": {
-		"node": ">=20"
+		"node": ">=22"
 	}
 }

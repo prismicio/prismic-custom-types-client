@@ -21,7 +21,7 @@ assignees: ""
 
 ### Reproduction
 
-<!-- If possible link to a minimal test case, without a reproduction, it is so hard to address problems :( -->
+<!-- If possible link to a minimal test case. Without a reproduction, it is very difficult to address problems. :( -->
 
 <details open>
 <summary>Additional Details</summary>
