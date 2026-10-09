@@ -42,21 +42,21 @@
 		"test": "npm run lint && npm run types && npm run unit && npm run build"
 	},
 	"devDependencies": {
-		"@prismicio/client": "^7.17.0",
+		"@prismicio/client": "^7.22.3",
 		"@prismicio/mock": "^0.7.2",
-		"@types/node": "^25.5.2",
-		"@vitest/coverage-v8": "^4.1.2",
+		"@types/node": "^26.6.4",
+		"@vitest/coverage-v8": "^4.1.11",
 		"msw": "^2.1.5",
-		"oxfmt": "^0.43.0",
-		"oxlint": "^1.58.0",
-		"tsdown": "^0.21.7",
-		"typescript": "^6.0.2",
-		"vitest": "^4.1.2"
+		"oxfmt": "^0.72.0",
+		"oxlint": "^1.87.0",
+		"tsdown": "^0.23.0",
+		"typescript": "^7.0.2",
+		"vitest": "^4.1.11"
 	},
 	"peerDependencies": {
 		"@prismicio/client": ">=7"
 	},
 	"engines": {
-		"node": ">=20"
+		"node": ">=22"
 	}
 }
