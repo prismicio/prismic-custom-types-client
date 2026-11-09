@@ -3,7 +3,7 @@ import { afterAll, beforeAll } from "vitest"
 import { server } from "./__testutils__/server"
 
 beforeAll(() => {
-	server.listen({ onUnhandledRequest: "error" })
+	server.listen({ onUnhandledFrame: "error" })
 })
 
 afterAll(() => {
