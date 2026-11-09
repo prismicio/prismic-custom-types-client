@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.1](https://github.com/prismicio/prismic-custom-types-client/compare/v2.1.0...v2.1.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* adapt to msw v3 ([bf914c7](https://github.com/prismicio/prismic-custom-types-client/commit/bf914c748488908b66c0a9ccb7a099132ed43bc4))
+
 ## [2.1.0](https://github.com/prismicio/prismic-custom-types-client/compare/v2.0.0...v2.1.0) (2024-06-20)
 
 ### Features
